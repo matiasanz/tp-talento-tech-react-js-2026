@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import paths from "../../router/paths"
+import paths from "../../../router/paths"
 const {HOME, ABOUT} = paths
 
 export default () => (
