@@ -1,14 +1,26 @@
-const movies = [
-    {
-        id: 1,
-        poster: "not_found.jpg",
-        title: "Toy story 25",
-        durationMinutes: 255,
-        categories: ["ANIMATED"],        
-        projectionFormats: ["3D", "2D"],
-        languageFormats: ["ENG", "DUB", "SUBS"]
-    }
-]
+import { useEffect, useState } from "react"
+
+export default () =>  { 
+    const [movies, setMovies] = useState([])
+
+    useEffect(()=>{
+        fetch('/api/movies.json')
+            .then(res => res.json())
+            .then(json => json.data)
+            .then(setMovies)
+            .catch(console.error)
+    }, [])
+    
+    return (<>
+        <ul>
+            {movies.map(m => 
+                <li key={m.id}>
+                {Movie(m)}
+                </li>
+            )}
+        </ul>
+    </>)
+}
 
 const Movie = (movie) =>
 <>
@@ -19,17 +31,6 @@ const Movie = (movie) =>
     </ul>
 </> 
     
-
-export default () =>   
-<>
-    <ul>
-        {movies.map(m => 
-            <li key={m.id}>
-              {Movie(m)}
-            </li>
-        )}
-    </ul>
-</>
 
 //utils
 
