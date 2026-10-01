@@ -5,7 +5,8 @@ import paths from "./paths"
 export default [
     {
         path: paths.HOME,
-        element: Home
+        element: Home,
+        alias: [paths.PRODUCTS]
     },
     {
         path: paths.ABOUT,
