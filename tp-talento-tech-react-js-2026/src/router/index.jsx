@@ -15,4 +15,4 @@ export default () => (
 )
 
 const ARoute = (path, element) => 
-    <Route key={path} path={path} element={element()}/>
+    <Route key={path} path={path} element={element}/>

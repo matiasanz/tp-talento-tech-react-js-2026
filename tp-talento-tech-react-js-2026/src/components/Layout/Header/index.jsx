@@ -2,7 +2,7 @@ import Navbar from "./Navbar";
 
 export default () => (
     <>
-        Header
+        Cine Fulanito
         <Navbar></Navbar>
     </>
 )

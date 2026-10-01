@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import paths from "../../router/paths"
+import { findAll } from "../../js/repository"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
 
     useEffect(()=>{
-        fetch('/api/movies.json')
-            .then(res => res.json())
-            .then(json => json.data)
+        findAll()
             .then(setMovies)
             .catch(console.error)
     }, [])
@@ -14,15 +15,18 @@ export default () =>  {
     return (<>
         <ul>
             {movies.map(m => 
-                <li key={m.id}>
-                {Movie(m)}
-                </li>
+                <Link to={paths.PRODUCT(m.id)} key={m.id}>
+                    <li>
+                        {MovieEntry(m)}
+                    </li>
+                </Link>
+                
             )}
         </ul>
     </>)
 }
 
-const Movie = (movie) =>
+export const MovieEntry = (movie) =>
 <>
     <h3>{movie.title}</h3>
     <img src="/placeholders/movie-poster.jpg"></img>
