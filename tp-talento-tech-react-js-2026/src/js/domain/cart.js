@@ -1,6 +1,13 @@
 export class Cart {
-    constructor(currentItems = []) {
-        this.items = currentItems;
+    constructor(currentItems = [], onChangeItems = ()=>{}) {
+        this._items = currentItems
+        this.onChangeItems = onChangeItems
+    }
+
+    get items(){ return this._items }
+
+    set items(newItems){
+        this.onChangeItems(newItems)
     }
 
     addItem(newItem) {
@@ -9,12 +16,16 @@ export class Cart {
         if (existingItem) {
             existingItem.quantity += newItem.quantity;
         } else {
-            this.items.push(newItem);
+            this.items = [...this.items, newItem]
         }
     }
 
     removeItemById(itemId) {
         this.items = this.items.filter(({ id }) => id !== itemId);
+    }
+
+    clear(){
+        this.items = []
     }
 }
 

@@ -13,7 +13,8 @@ export function useCart() {
 }
 
 export function CartProvider({ children }) {
-    const [cart, _] = useState(new Cart());
+    const [items, setItems] = useState([]);
+    const cart = new Cart(items, setItems)
 
     return (
         <cartContext.Provider value={cart}>
