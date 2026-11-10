@@ -39,8 +39,8 @@ export const MovieEntry = ({title, poster, durationMinutes}) =>
 //utils
 
 function durationToString(durationMinutes){
-    const hours = Math.floor(durationMinutes/60).toString().padStart(2, '0')
+    const hours = Math.floor(durationMinutes/60).toString()
     const minutes = (durationMinutes%60).toString().padStart(2, '0')
 
-    return `${hours} Hs ${minutes} m`
+    return `${hours} ${hours==1? 'h': 'hs'} ${minutes} m`
 }
