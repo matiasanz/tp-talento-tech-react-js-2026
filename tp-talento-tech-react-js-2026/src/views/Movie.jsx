@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { findById } from "../js/repository"
+import MoviesRepo from "../js/repositories/movies_repo"
 import { useEffect, useState } from "react"
 import {MovieEntry} from '../components/MovieListings'
 
@@ -9,10 +9,8 @@ export default () => {
     const [movie, setMovie] = useState({})
 
     useEffect(()=>{
-        findById(productId).then(d => {
-            console.log(JSON.stringify(d))
-            return d
-        }).then(setMovie)
+        MoviesRepo.findById(productId)
+            .then(setMovie)
     }, [productId])
 
     return (

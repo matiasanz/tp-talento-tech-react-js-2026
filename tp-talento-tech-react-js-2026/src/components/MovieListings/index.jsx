@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import paths from "../../router/paths"
-import { findAll } from "../../js/repository"
+import moviesRepo from "../../js/repositories/movies_repo"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
 
     useEffect(()=>{
-        findAll()
+        moviesRepo.findAll()
             .then(setMovies)
             .catch(console.error)
     }, [])
@@ -31,7 +31,7 @@ export const MovieEntry = (movie) =>
     <h3>{movie.title}</h3>
     <img src="/placeholders/movie-poster.jpg"></img>
     <ul>
-        <li>duration: {durationToString(movie.durationMinutes)}</li>
+        <li>duración: {durationToString(movie.durationMinutes)}</li>
     </ul>
 </> 
     
