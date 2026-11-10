@@ -1,14 +1,18 @@
-import { useParams } from "react-router-dom"
-import MoviesRepo from "../js/repositories/movies_repo"
 import { useEffect, useState } from "react"
-import {MovieEntry} from '../components/MovieListings'
-import { useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
+
+import { MovieEntry } from '../components/MovieListings'
+
 import paths from "../router/paths"
+import MoviesRepo from "../js/repositories/movies_repo"
+import { useCart } from "../context/cart"
+import { Item } from "../js/domain/cart"
 
 export default () => {
     const {productId} = useParams()
     const [movie, setMovie] = useState({})
     const navigate = useNavigate()
+    const cart = useCart()
 
     useEffect(()=>{
         MoviesRepo.findById(productId)
@@ -19,8 +23,12 @@ export default () => {
     return (
         <>
             <MovieEntry {...movie}/>
-            <button>Comprar entrada</button>
+            <button onClick={()=>onClickAddTicketToCart(cart, movie, navigate)}>Comprar entrada</button>
         </>
     )
+}
 
+function onClickAddTicketToCart(cart, movie, navigate){
+    cart.addItem(new Item(movie.id, movie.title, 1))
+    navigate(paths.CART)
 }
