@@ -1,5 +1,6 @@
 import Home from "../views/Home"
 import Movie from "../views/Movie"
+import Cart from "../components/cart"
 import samples from "../views/Samples"
 import paths from "./paths"
 
@@ -16,6 +17,10 @@ export default [
     {
         path: paths.ABOUT,
         element: <samples.About/>
+    },
+    {
+        path: paths.CART,
+        element: <Cart/>
     },
     {
         path: "*",
