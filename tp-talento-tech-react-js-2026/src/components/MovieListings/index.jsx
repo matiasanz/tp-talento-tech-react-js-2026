@@ -26,12 +26,12 @@ export default () =>  {
     </>)
 }
 
-export const MovieEntry = (movie) =>
+export const MovieEntry = ({title, poster, durationMinutes}) =>
 <>
-    <h3>{movie.title}</h3>
-    <img src={movie.poster}></img>
+    <h3>{title}</h3>
+    <img src={poster}></img>
     <ul>
-        <li>duración: {durationToString(movie.durationMinutes)}</li>
+        <li>duración: {durationToString(durationMinutes)}</li>
     </ul>
 </> 
     

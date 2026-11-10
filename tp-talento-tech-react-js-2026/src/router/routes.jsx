@@ -1,6 +1,6 @@
 import Home from "../views/Home"
 import Movie from "../views/Movie"
-import Cart from "../components/cart"
+import Cart from "../views/Cart"
 import samples from "../views/Samples"
 import paths from "./paths"
 
