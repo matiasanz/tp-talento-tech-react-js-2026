@@ -7,16 +7,29 @@ class StaticJsonRepo {
         .then(res => res.json())
         .then(json => json.data)
 
-    findById = async(elementId) => {
+    findMany = async(filter) => {
         const elements = await this.findAll()
-            .then(res => res.filter(({id}) => id == elementId))
+            .then(res => res.filter(filter))
 
         if(!elements.length) {
             throw new Error(`element with id ${elementId} not found`)
         }
 
-        return elements[0]
+        return elements
     }
+
+    findOne = async(filter) => {
+        const value = await this.findMany(filter)
+        if(value.length === 0){
+            throw new Error('element not found')
+        } else if(value.length > 1){
+            throw new Error('found more than one element')
+        }
+        
+        return value[0]
+    }
+
+    findById = async(elementId) => this.findOne(({id}) => id == elementId)
 }
 
 export {StaticJsonRepo}
