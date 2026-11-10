@@ -5,4 +5,5 @@ export default {
         return `${this.PRODUCTS}/${productId}`
     },
     ABOUT: "/about",
+    NOT_FOUND: "/not-found"
 }
