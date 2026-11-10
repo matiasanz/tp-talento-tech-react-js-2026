@@ -29,7 +29,7 @@ export default () =>  {
 export const MovieEntry = (movie) =>
 <>
     <h3>{movie.title}</h3>
-    <img src="/assets/placeholders/movie-poster.jpg"></img>
+    <img src={movie.poster}></img>
     <ul>
         <li>duración: {durationToString(movie.durationMinutes)}</li>
     </ul>

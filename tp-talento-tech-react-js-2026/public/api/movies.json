@@ -1,7 +1,7 @@
 { "data": [
     {
         "id": 1,
-        "poster": "toy_story_25.jpg",
+        "poster": "/assets/placeholders/movie-poster.jpg",
         "title": "Toy Story 25",
         "durationMinutes": 255,
         "categories": ["ANIMATED", "ADVENTURE"],
@@ -10,7 +10,7 @@
     },
     {
         "id": 2,
-        "poster": "cyber_punk_2099.jpg",
+        "poster": "/assets/placeholders/movie-poster.jpg",
         "title": "Cyber Punk 2099",
         "durationMinutes": 142,
         "categories": ["SCI-FI", "ACTION"],
@@ -19,7 +19,7 @@
     },
     {
         "id": 3,
-        "poster": "the_silent_ocean.jpg",
+        "poster": "/assets/placeholders/movie-poster.jpg",
         "title": "The Silent Ocean",
         "durationMinutes": 118,
         "categories": ["DRAMA", "MYSTERY"],
@@ -28,7 +28,7 @@
     },
     {
         "id": 4,
-        "poster": "laughing_matters.jpg",
+        "poster": "/assets/placeholders/movie-poster.jpg",
         "title": "Laughing Matters",
         "durationMinutes": 95,
         "categories": ["COMEDY"],
