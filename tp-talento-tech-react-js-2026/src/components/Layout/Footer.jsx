@@ -1,11 +1,11 @@
-import EmployeesRepo from "../../js/repositories/static_json/employees_repo"
+import employeesRepo from "../../js/repositories/employees_repo"
 import { useEffect, useState } from "react"
 
 export default () => {
     const [employees, setEmployees] = useState([])
 
     useEffect(()=>{
-        EmployeesRepo.findAll()
+        employeesRepo.findAll()
             .then(setEmployees)
             .catch(console.error)
     }, [])

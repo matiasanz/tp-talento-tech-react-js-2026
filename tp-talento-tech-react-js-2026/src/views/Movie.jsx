@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { MovieEntry } from '../components/MovieListings'
 
 import paths from "../router/paths"
-import MoviesRepo from "../js/repositories/firebase/movies_repo"
+import moviesRepo from "../js/repositories/movies_repo"
 import { useCart } from "../context/cart"
 import { Item } from "../js/domain/cart"
 
@@ -15,7 +15,7 @@ export default () => {
     const cart = useCart()
 
     useEffect(()=>{
-        MoviesRepo.findById(productId)
+        moviesRepo.findById(productId)
             .then(setMovie)
             .catch(err=>{
                 if(err.status === 404){
