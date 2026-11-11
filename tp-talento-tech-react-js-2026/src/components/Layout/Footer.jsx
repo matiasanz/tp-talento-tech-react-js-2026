@@ -1,4 +1,4 @@
-import EmployeesRepo from "../../js/repositories/employees_repo"
+import EmployeesRepo from "../../js/repositories/static_json/employees_repo"
 import { useEffect, useState } from "react"
 
 export default () => {

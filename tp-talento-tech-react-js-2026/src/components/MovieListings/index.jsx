@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import paths from "../../router/paths"
-import moviesRepo from "../../js/repositories/movies_repo"
+import moviesRepo from "../../js/repositories/firebase/movies_repo"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])

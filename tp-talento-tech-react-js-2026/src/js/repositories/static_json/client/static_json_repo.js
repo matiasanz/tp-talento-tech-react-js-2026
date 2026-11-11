@@ -8,14 +8,8 @@ class StaticJsonRepo {
         .then(json => json.data)
 
     findMany = async(filter) => {
-        const elements = await this.findAll()
+        return this.findAll()
             .then(res => res.filter(filter))
-
-        if(!elements.length) {
-            throw new Error(`element with id ${elementId} not found`)
-        }
-
-        return elements
     }
 
     findOne = async(filter) => {
