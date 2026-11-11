@@ -4,9 +4,9 @@ import { useParams, useNavigate } from "react-router-dom"
 import { MovieEntry } from '../components/MovieListings'
 
 import paths from "../router/paths"
-import moviesRepo from "../js/repositories/movies_repo"
+import moviesRepo from "../../js/repositories/movies_repo"
 import { useCart } from "../context/cart"
-import { Item } from "../js/domain/cart"
+import { Item } from "../../js/domain/cart"
 
 export default () => {
     const {productId} = useParams()

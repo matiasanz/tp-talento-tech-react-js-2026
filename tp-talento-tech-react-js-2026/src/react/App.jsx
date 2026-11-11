@@ -5,10 +5,10 @@ import { BrowserRouter } from 'react-router-dom';
 
 export default () => (
     <BrowserRouter>
-    <CartProvider>
-        <Layout>
-            <Router/>
-        </Layout>
-    </CartProvider>
+        <CartProvider>
+            <Layout>
+                <Router/>
+            </Layout>
+        </CartProvider>
     </BrowserRouter>
 )
