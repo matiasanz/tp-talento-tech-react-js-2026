@@ -2,14 +2,16 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import paths from "../../router/paths"
 import moviesRepo from "../../../js/repositories/movies_repo"
+import { useErrorHandler } from "../../context/error_handler"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
+    const {handleError} = useErrorHandler()
 
     useEffect(()=>{
         moviesRepo.findAll()
             .then(setMovies)
-            .catch(console.error)
+            .catch(handleError)
     }, [])
     
     return (<>

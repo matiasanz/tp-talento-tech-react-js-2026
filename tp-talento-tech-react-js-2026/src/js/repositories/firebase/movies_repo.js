@@ -1,4 +1,9 @@
 import { ReadClient } from "./client/read_client";
+import { Movie, MovieEntry } from "../../domain/movie";
+
+const mapMovieEntry = m => new MovieEntry(m.id, m.title, m.durationMinutes, m.poster)
+
+const mapMovie = m => new Movie(m.id, m.title, m.durationMinutes, m.poster)
 
 class ReadRepository{
     constructor(){
@@ -6,11 +11,11 @@ class ReadRepository{
     }
 
     async findAll(){
-       return this.client.findAll()
+       return this.client.findAll(mapMovieEntry)
     }
 
     async findById(movieId){
-        return this.client.findById(movieId)
+        return this.client.findById( movieId, mapMovie)
     }
 }
 

@@ -14,16 +14,21 @@ export function useErrorHandler() {
 }
 
 export function ErrorHandlerProvider({ children }) {
-    const [error, handleError] = useState(null);
+    const [error, setError] = useState(null);
 
     return (
-        <errorHandlerContext.Provider value={{handleError}}>
+        <errorHandlerContext.Provider value={{handleError: errorHandler(setError)}}>
             {
                 error!=null? (<ErrorView status={getStatus(error)}></ErrorView>)
                 : children
             }
         </errorHandlerContext.Provider>
     );
+}
+
+const errorHandler = setError => (err) => {
+    console.error(err)
+    setError(err)
 }
 
 function getStatus(error) {
