@@ -4,6 +4,7 @@ import Cart from "../views/Cart"
 import paths from "./paths"
 import About from "../views/About"
 import Error from "../views/Error"
+import Admin from "../views/Admin"
 
 export default [
     {
@@ -22,6 +23,10 @@ export default [
     {
         path: paths.CART,
         element: <Cart/>
+    },
+    {
+        path: paths.ADMIN,
+        element: <Admin/>
     },
     {
         path: "*",
