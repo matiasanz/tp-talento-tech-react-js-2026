@@ -9,6 +9,8 @@ export default () =>  {
             { cart.items.map(i => Item(i, cart)) }
         </ul>
 
+        <p><i>Los asientos se asignan al ingresar al establecimiento.</i></p>
+
         <button onClick={()=>onClickClearCart(cart)}>
             <img src="/assets/icons/delete.svg"/>
             Vaciar carrito
