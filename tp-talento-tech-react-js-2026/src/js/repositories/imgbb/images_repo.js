@@ -1,11 +1,13 @@
-import { ImgBBClient } from "./client"
+import { apiClient } from "./client/config"
 
-const env = import.meta.env
-
-export default {
-    client: new ImgBBClient(env.VITE_IMGBB_API_KEY, env.VITE_IMGBB_API_EXPIRATION, env.VITE_IMGBB_URL),
+class Repository {
+    constructor(client){
+        this.client = client
+    }
 
     async saveImage(imgFile){
         return this.client.uploadFile(imgFile)
     }
 }
+
+export default new Repository(apiClient)
