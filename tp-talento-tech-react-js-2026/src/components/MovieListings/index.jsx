@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import paths from "../../router/paths"
-import { findAll } from "../../js/repository"
+import moviesRepo from "../../js/repositories/movies_repo"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
 
     useEffect(()=>{
-        findAll()
+        moviesRepo.findAll()
             .then(setMovies)
             .catch(console.error)
     }, [])
@@ -26,12 +26,12 @@ export default () =>  {
     </>)
 }
 
-export const MovieEntry = (movie) =>
+export const MovieEntry = ({title, poster, durationMinutes}) =>
 <>
-    <h3>{movie.title}</h3>
-    <img src="/placeholders/movie-poster.jpg"></img>
+    <h3>{title}</h3>
+    <img src={poster}></img>
     <ul>
-        <li>duration: {durationToString(movie.durationMinutes)}</li>
+        <li>duración: {durationToString(durationMinutes)}</li>
     </ul>
 </> 
     
@@ -39,8 +39,8 @@ export const MovieEntry = (movie) =>
 //utils
 
 function durationToString(durationMinutes){
-    const hours = Math.floor(durationMinutes/60).toString().padStart(2, '0')
+    const hours = Math.floor(durationMinutes/60).toString()
     const minutes = (durationMinutes%60).toString().padStart(2, '0')
 
-    return `${hours} Hs ${minutes} m`
+    return `${hours} ${hours==1? 'h': 'hs'} ${minutes} m`
 }

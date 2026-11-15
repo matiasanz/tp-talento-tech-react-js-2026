@@ -1,0 +1,28 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Natalio",
+            "lastname": "Ruiz",
+            "role": "Socio"
+        },
+        {
+            "id": 2,
+            "name": "Mariel",
+            "lastname": "Capitán",
+            "role": "Socia"
+        },
+        {
+            "id": 3,
+            "name": "Salvador",
+            "lastname": "Tijeras",
+            "role": "Gerente"
+        },
+        {
+            "id": 4,
+            "name": "Cassandra",
+            "lastname": "Alsol",
+            "role": "Atención Candybar"
+        }
+    ]
+}
