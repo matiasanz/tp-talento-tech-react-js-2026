@@ -1,9 +1,12 @@
 import { useState } from "react"
 import { MovieDraft } from "../../../js/domain/movie"
+import imagesRepo from "../../../js/repositories/images_repo"
 
 export default () => {
     const [movie, setMovie] = useState(new MovieDraft())
+
     const [resultMessage, setResultMessage] = useState('')
+    
 
     const onSubmitForm = event => sendValue(event, {setMovie, setResultMessage})
     const onChangeInputValue = updateValue(setMovie)
@@ -12,35 +15,35 @@ export default () => {
         <>
             <form onSubmit={onSubmitForm}>
                 <label htmlFor="title">Título</label>
-                <input
-                    required
-                    id="title"
-                    name="title"
-                    type="text"
-                    placeholder="Título"
-                    value={movie.title}
+                <input required
+                    placeholder="Título..." 
+                    id="title" name="title"
+                    type="text" value={movie.title}
                     onChange={onChangeInputValue}
                 />
 
                 <label htmlFor="summary">Resumen</label>
-                <textarea
-                    required
-                    id="summary"
-                    name="summary"
-                    placeholder="Resumen"
+                <textarea required
+                    placeholder="Había una vez..."
+                    id="summary" name="summary"
                     value={movie.summary}
                     onChange={onChangeInputValue}
                 />
 
                 <label htmlFor="durationMinutes">Duración</label>
-                <input
-                    min="00:01"
-                    id="durationMinutes"
-                    name="durationMinutes"
-                    type="time"
-                    value={movie.durationMinutes}
+                <input min="00:01"
+                    id="durationMinutes" name="durationMinutes"
+                    type="time" value={movie.durationMinutes}
                     onChange={onChangeInputValue}
                 />
+
+                <label htmlFor="poster">Imagen:</label>
+                <input required
+                    id="poster" name="poster"
+                    type="file" 
+                    onChange={updateFile(setMovie)}
+                />
+
                 <input type="submit" value="Enviar"/>
             </form>
 
@@ -53,7 +56,6 @@ export default () => {
 function updateValue(setState){
     return (event) => {
         const {target: {name, value}} = event;
-
         setState((current) => ({
             ...current,
             [name]: value
@@ -61,9 +63,22 @@ function updateValue(setState){
     }
 }
 
-function sendValue(event, state){
+function updateFile(setState){
+    return async(event) => {
+        const {target: {name, files}} = event;
+        const result = await imagesRepo.saveImage(files[0])
+            
+        setState(current => ({
+                ...current,
+                [name]: result.data.url
+            })
+        )
+    }
+}
+
+function sendValue(event, state){   
     event.preventDefault()
     state.setMovie(new MovieDraft())
-    state.setResultMessage('Su película se ha sido recibida e ignorada con éxito')
+    state.setResultMessage('Su película ha sido recibida e ignorada con éxito')
 }
 

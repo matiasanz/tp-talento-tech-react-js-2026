@@ -1,13 +1,15 @@
 import employeesRepo from "../../../js/repositories/employees_repo"
 import { useEffect, useState } from "react"
+import { useErrorHandler } from "../../context/error_handler"
 
 export default () => {
     const [employees, setEmployees] = useState([])
+    const {handleError} = useErrorHandler()
 
     useEffect(()=>{
         employeesRepo.findAll()
             .then(setEmployees)
-            .catch(console.error)
+            .catch(handleError)
     }, [])
 
     return (

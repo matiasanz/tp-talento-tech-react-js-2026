@@ -19,5 +19,6 @@ export class MovieDraft {
         this.poster = ''
         this.summary = ''
         this.durationMinutes = '00:00'
+        this.poster = ''
     }
 }

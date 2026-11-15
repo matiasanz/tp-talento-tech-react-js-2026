@@ -27,7 +27,6 @@ export function ErrorHandlerProvider({ children }) {
 }
 
 const errorHandler = setError => (err) => {
-    console.error(err)
     setError(err)
 }
 
