@@ -7,8 +7,11 @@ import paths from "../router/paths"
 import moviesRepo from "../../js/repositories/movies_repo"
 import { useCart } from "../context/cart"
 import { Item } from "../../js/domain/cart"
+import { useErrorHandler } from "../context/error_handler"
 
 export default () => {
+    const {handleError} = useErrorHandler()
+
     const {productId} = useParams()
     const [movie, setMovie] = useState({})
     const navigate = useNavigate()
@@ -17,13 +20,7 @@ export default () => {
     useEffect(()=>{
         moviesRepo.findById(productId)
             .then(setMovie)
-            .catch(err=>{
-                if(err.status === 404){
-                    navigate(paths.NOT_FOUND)
-                }
-            
-                throw err
-            })
+            .catch(handleError)
     }, [productId])
 
     return (

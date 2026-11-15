@@ -1,8 +1,9 @@
 import Home from "../views/Home"
 import Movie from "../views/Movie"
 import Cart from "../views/Cart"
-import samples from "../views/Samples"
 import paths from "./paths"
+import About from "../views/About"
+import Error from "../views/Error"
 
 export default [
     {
@@ -16,7 +17,7 @@ export default [
     },
     {
         path: paths.ABOUT,
-        element: <samples.About/>
+        element: <About/>
     },
     {
         path: paths.CART,
@@ -24,6 +25,6 @@ export default [
     },
     {
         path: "*",
-        element: <samples.NotFound/>
+        element: <Error status={404}/>
     },
 ]
