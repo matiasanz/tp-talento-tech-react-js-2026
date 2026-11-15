@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
-import paths from "../../router/paths"
-import {useCart} from "../../context/cart"
+import paths from "../router/paths"
+import {useCart} from "../context/cart"
 
 export default () =>  { 
     const cart = useCart()
