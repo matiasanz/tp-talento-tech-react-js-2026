@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrusel Tailwind CSS v4</title>
+  
+  <!-- CDN oficial de Tailwind CSS v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen m-0 p-4">
+
+  <!-- Contenedor principal del carrusel -->
+  <div class="relative w-full max-w-xl mx-auto overflow-hidden rounded-lg shadow-lg">
+    
+    <!-- Contenedor interno de los slides -->
+    <div id="carousel" class="flex overflow-x-hidden scroll-smooth w-full">
+      <!-- Slide 1 -->
+      <div class="min-w-full h-64 bg-blue-500 flex items-center justify-center text-white text-2xl font-bold shrink-0">
+        Slide 1
+      </div>
+      <!-- Slide 2 -->
+      <div class="min-w-full h-64 bg-green-500 flex items-center justify-center text-white text-2xl font-bold shrink-0">
+        Slide 2
+      </div>
+      <!-- Slide 3 -->
+      <div class="min-w-full h-64 bg-purple-500 flex items-center justify-center text-white text-2xl font-bold shrink-0">
+        Slide 3
+      </div>
+    </div>
+
+    <!-- Botón Anterior -->
+    <button onclick="moveSlide(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-2 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer select-none">
+      ❮
+    </button>
+
+    <!-- Botón Siguiente -->
+    <button onclick="moveSlide(1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-2 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer select-none">
+      ❯
+    </button>
+  </div>
+
+  <!-- Lógica de control en JavaScript -->
+  <script>
+    const carousel = document.getElementById('carousel');
+    let index = 0;
+
+    function moveSlide(direction) {
+      const totalSlides = carousel.children.length;
+      index = (index + direction + totalSlides) % totalSlides;
+      
+      carousel.scrollTo({
+        left: carousel.clientWidth * index,
+        behavior: 'smooth'
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,3 +1,3 @@
-import {StaticJsonRepo} from './utils/static_json_repo' 
+import moviesRepo from "./firebase/movies_repo"
 
-export default new StaticJsonRepo('/api/movies.json')
+export default moviesRepo

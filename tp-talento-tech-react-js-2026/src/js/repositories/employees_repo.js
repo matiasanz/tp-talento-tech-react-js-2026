@@ -1,3 +1,3 @@
-import {StaticJsonRepo} from './utils/static_json_repo' 
+import employeesRepo from "./static_json/employees_repo";
 
-export default new StaticJsonRepo('/api/people.json')
+export default employeesRepo
