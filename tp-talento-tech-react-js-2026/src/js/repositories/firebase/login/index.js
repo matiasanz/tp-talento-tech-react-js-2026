@@ -1,9 +1,9 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { AuthResponseDto } from "./dto";
 import { FirebaseError } from "firebase/app";
 import { auth } from "../client/config";
 
-export default async(email, password) => {
+export async function login(email, password) {
     const userData = await signInWithEmailAndPassword(auth, email, password)
         .then(u => new AuthResponseDto(u))
         .catch(handleError)
@@ -14,6 +14,11 @@ export default async(email, password) => {
     }
 
     return userData
+}
+
+export async function logout() {
+    return signOut(auth)
+        .catch(handleError)
 }
 
 function handleError(error){
