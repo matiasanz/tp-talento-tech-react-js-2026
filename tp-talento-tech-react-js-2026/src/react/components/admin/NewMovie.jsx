@@ -45,7 +45,7 @@ export default () => {
                 <label htmlFor="poster">Imagen:</label>
                 <input required
                     id="poster" name="poster"
-                    type="file" 
+                    type="file" accept="image/*"
                     onChange={updateFile(setMovie)}
                 />
 
