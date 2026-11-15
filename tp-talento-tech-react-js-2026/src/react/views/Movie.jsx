@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-
 import { MovieEntry } from '../components/MovieListings'
 
 import paths from "../router/paths"
-import moviesRepo from "../../js/repositories/movies_repo"
+import { useErrorHandler } from "../context/error_handler"
+
 import { useCart } from "../context/cart"
 import { Item } from "../../js/domain/cart"
-import { useErrorHandler } from "../context/error_handler"
+
+import moviesRepo from "../../js/repositories/movies_read_repo"
 
 export default () => {
     const {handleError} = useErrorHandler()

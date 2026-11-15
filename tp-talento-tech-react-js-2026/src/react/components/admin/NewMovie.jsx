@@ -1,14 +1,19 @@
 import { useState } from "react"
 import { MovieDraft } from "../../../js/domain/movie"
 import imagesRepo from "../../../js/repositories/images_repo"
+import moviesRepo from "../../../js/repositories/movies_write_repo"
+import { useNavigate } from "react-router-dom"
+import paths from "../../router/paths"
 
 export default () => {
     const [movie, setMovie] = useState(new MovieDraft())
 
+    const navigate = useNavigate()
+
     const [resultMessage, setResultMessage] = useState('')
     
 
-    const onSubmitForm = event => sendValue(event, {setMovie, setResultMessage})
+    const onSubmitForm = event => sendValue(event, movie, setResultMessage, navigate)
     const onChangeInputValue = updateValue(setMovie)
 
     return (
@@ -76,9 +81,10 @@ function updateFile(setState){
     }
 }
 
-function sendValue(event, state){   
+function sendValue(event, value, setResultMessage, navigate){   
     event.preventDefault()
-    state.setMovie(new MovieDraft())
-    state.setResultMessage('Su película ha sido recibida e ignorada con éxito')
+    moviesRepo.insert(value)
+        .then(({id})=>navigate(paths.PRODUCT(id)))
+        .catch(err=>setResultMessage('Se produjo un error: '+err.message))
 }
 

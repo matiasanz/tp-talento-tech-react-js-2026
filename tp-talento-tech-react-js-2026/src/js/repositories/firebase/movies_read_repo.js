@@ -3,7 +3,9 @@ import { Movie, MovieEntry } from "../../domain/movie";
 
 const mapMovieEntry = m => new MovieEntry(m.id, m.title, m.durationMinutes, m.poster)
 
-const mapMovie = m => new Movie(m.id, m.title, m.durationMinutes, m.poster)
+const mapMovie = m => {
+    return new Movie(m.id, m.title, m.durationMinutes, m.poster)
+}
 
 class ReadRepository{
     constructor(){
