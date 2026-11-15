@@ -1,5 +1,8 @@
 import { createContext, useState, useContext } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 import { User } from "../../js/domain/users";
+import { useEffect } from "react";
+import { auth } from "../../js/repositories/firebase/client/config";
 
 const sessionUserContext = createContext();
 
@@ -15,17 +18,17 @@ export function useSessionUser() {
 export function SessionUserProvider({ children }) {
     const [sessionUser, setSessionUser] = useState(null);
 
+    useEffect(()=>{
+        const unsubscribe = onAuthStateChanged(auth, async(user) => {
+            setSessionUser(user? new User(user): null)
+        })
+
+        return unsubscribe
+    })
+
     return (
-        <sessionUserContext.Provider value={{sessionUser, onLogin: onLogin(setSessionUser), onLogout: onLogout(setSessionUser)}}>
+        <sessionUserContext.Provider value={{sessionUser}}>
             {children}
         </sessionUserContext.Provider>
     );
-}
-
-const onLogin = setSessionUser => loginResult => {
-    setSessionUser(new User(loginResult.user))    
-}
-
-const onLogout = setSessionUser => () => {
-    setSessionUser(null)
 }

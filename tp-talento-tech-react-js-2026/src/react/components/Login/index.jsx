@@ -4,23 +4,20 @@ import { useSessionUser } from '../../context/session';
 import LoginForm from './form';
 
 const Login = () => {
-	const {sessionUser, onLogout} = useSessionUser() 
+	const {sessionUser} = useSessionUser() 
 	const {handleError} = useErrorHandler()
 
 	return !sessionUser && <LoginForm/> || (
 	<>
 		<h2>Bienvenido {sessionUser.email}</h2>
-		<button onClick={handleLogout(onLogout, handleError)}>Cerrar sesión</button>
+		<button onClick={handleLogout(handleError)}>Cerrar sesión</button>
 	</>)
 };
 
 export default Login;
 
 
-const handleLogout = (onLogout, handleError) => event => {
+const handleLogout = (handleError) => event => {
 	event.preventDefault()
-	logout()
-		.then(onLogout)
-		.catch(handleError)
-
+	logout().catch(handleError)
 }
