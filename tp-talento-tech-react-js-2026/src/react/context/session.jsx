@@ -16,7 +16,7 @@ export function SessionUserProvider({ children }) {
     const [sessionUser, setSessionUser] = useState(null);
 
     return (
-        <sessionUserContext.Provider value={{sessionUser, onLogin: onLogin(setSessionUser)}}>
+        <sessionUserContext.Provider value={{sessionUser, onLogin: onLogin(setSessionUser), onLogout: onLogout(setSessionUser)}}>
             {children}
         </sessionUserContext.Provider>
     );
@@ -24,4 +24,8 @@ export function SessionUserProvider({ children }) {
 
 const onLogin = setSessionUser => loginResult => {
     setSessionUser(new User(loginResult.user))    
+}
+
+const onLogout = setSessionUser => () => {
+    setSessionUser(null)
 }

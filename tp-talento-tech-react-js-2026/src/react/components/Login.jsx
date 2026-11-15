@@ -4,14 +4,14 @@ import login, { ErrInvalidCredentials } from '../../js/repositories/firebase/log
 import { useErrorHandler } from '../context/error_handler';
 import { useSessionUser } from '../context/session';
 
-const Login = () => {
+
+const LoginForm = (onLogin) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("")
 	const [message, setMessage] = useState("")
 	const {handleError} = useErrorHandler()
-	const {sessionUser, onLogin} = useSessionUser() 
 
-	return sessionUser && (<h2>Bienvenido {sessionUser.email}</h2>) || (
+	return (
 	<>
 		<h2>Iniciar Sesión</h2>
 		<form onSubmit={handleLogin({email, password}, login, onLogin, setMessage, handleError)}>
@@ -32,6 +32,16 @@ const Login = () => {
 		<h5>{message}</h5>
 	</>
 	);
+}
+
+const Login = () => {
+	const {sessionUser, onLogin, onLogout} = useSessionUser() 
+
+	return sessionUser && (
+	<>
+		<h2>Bienvenido {sessionUser.email}</h2>
+		<button onClick={handleLogout(onLogout)}>Cerrar sesión</button>
+	</>) || LoginForm(onLogin)
 };
 
 export default Login;
@@ -47,8 +57,12 @@ const handleLogin = ({email, password}, login, onLogin, setMessage, handleError)
 			}
 
 			handleError(error)
-		}
-	)
+		})
+}
+
+const handleLogout = (logout) => event => {
+	event.preventDefault()
+	logout()
 }
 
 //utils
