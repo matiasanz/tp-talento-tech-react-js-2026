@@ -2,17 +2,19 @@
 import { useState } from 'react';
 import login, { ErrInvalidCredentials } from '../../js/repositories/firebase/login';
 import { useErrorHandler } from '../context/error_handler';
+import { useSessionUser } from '../context/session';
 
 const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("")
 	const [message, setMessage] = useState("")
 	const {handleError} = useErrorHandler()
+	const {sessionUser, onLogin} = useSessionUser() 
 
-	return (
+	return sessionUser && (<h2>Bienvenido {sessionUser.email}</h2>) || (
 	<>
 		<h2>Iniciar Sesión</h2>
-		<form onSubmit={handleLogin({email, password}, setMessage, handleError)}>
+		<form onSubmit={handleLogin({email, password}, login, onLogin, setMessage, handleError)}>
 			<input type="email" required autoComplete='on'
 				placeholder="Correo electrónico"
 				value={email}
@@ -34,13 +36,11 @@ const Login = () => {
 
 export default Login;
 
-const handleLogin = ({email, password}, setMessage, handleError) => (event) => {
+const handleLogin = ({email, password}, login, onLogin, setMessage, handleError) => (event) => {
 	event.preventDefault();
 
 	login(email, password)
-		.then((userCredential) => {
-			console.log('ok: '+JSON.stringify(userCredential, null, 2))
-		}).catch((error) => {
+		.then(onLogin).catch((error) => {
 			if(error instanceof ErrInvalidCredentials){
 				setMessage("El usuario y/o la contraseña son incorrectos")
 				return
