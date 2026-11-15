@@ -12,3 +12,12 @@ export class Movie extends MovieEntry{
         super(id, title, durationMinutes, poster)
     }
 }
+
+export class MovieDraft {
+    constructor(){
+        this.title = ''
+        this.poster = ''
+        this.summary = ''
+        this.durationMinutes = '00:00'
+    }
+}

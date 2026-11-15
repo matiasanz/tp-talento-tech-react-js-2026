@@ -6,5 +6,5 @@ export default {
     },
     CART: "/cart",
     ABOUT: "/about",
-    NOT_FOUND: "/not-found",
+    ADMIN: "/admin",
 }
