@@ -16,7 +16,7 @@ export default () => {
     const {handleError} = useErrorHandler()
 
     const {productId} = useParams()
-    const [movie, setMovie] = useState({})
+    const [movie, setMovie] = useState(null)
     const navigate = useNavigate()
     const cart = useCart()
     const [showings, setShowings] = useState([]) 
@@ -35,7 +35,7 @@ export default () => {
 
     return (
         <>
-            <Loading isLoaded={movie.id}>
+            <Loading isLoaded={movie}>
                 <MovieEntry {...movie}/>
             </Loading>
 
@@ -47,9 +47,8 @@ export default () => {
                                 {index!=0 && (<br/>)}
 
                                 <input type="radio"
-                                    value={id}
-                                    id={`showing-${id}-input`}
-                                    checked={ selectedShowing === id} 
+                                    id={`showing-${id}-input`} name="showingSelection"
+                                    value={id} 
                                     onChange={ onChangeSelectedShowing(setSelectedShowing) } 
                                 />
                                 <label htmlFor={`showing-${id}-input`}>{formatDateTime(dateTime)}</label>
@@ -73,7 +72,13 @@ const onChangeSelectedShowing = (setSelectedShowing) => ({target: {value}}) => {
     setSelectedShowing(value)
 }
 
-function formatDateTime(dateTime){
-    return dateTime
-//    return `${dateTime.getUTCDate().padStart(2)}/${dateTime.getUTCMonth().padStart(2)} a las ${dateTime.getUTCHour().padStart(2)}:${dateTime.getUTCMinutes().padStart(2)} hs`
+function formatDateTime(dateTime) {
+    const date = new Date(dateTime);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${day}/${month} ${hours}:${minutes} hs`;
 }
