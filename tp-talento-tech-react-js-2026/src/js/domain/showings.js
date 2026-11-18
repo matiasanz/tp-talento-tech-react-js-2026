@@ -13,7 +13,6 @@ export class Auditorium {
         this.rowsLayout = rowsLayout;
         this.rowsCount = rowsCount;
     }
-    
 
     // Calculates the number of seats per row (e.g., 2 + 4 + 2 = 8)
     get seatsPerRow() {
@@ -23,6 +22,41 @@ export class Auditorium {
     // Calculates the total seating capacity (e.g., 8 * 12 = 96)
     get totalCapacity() {
         return this.seatsPerRow * this.rowsCount;
+    }
+
+    // Domain logic: generates the physical map of rows, seats, and aisles
+    buildLayout() {
+        const perRow = this.seatsPerRow;
+
+        return Array.from({ length: this.rowsCount }, (_, rowIndex) => {
+            const rowNumber = rowIndex + 1;
+            const rowLabel = `F${String(rowNumber).padStart(2, '0')}`;
+            const cells = [];
+            let currentGlobal = rowIndex * perRow + 1;
+            let currentInRow = 1;
+
+            this.rowsLayout.forEach((seatsInBlock, blockIndex) => {
+                for (let i = 0; i < seatsInBlock; i++) {
+                    const globalNumber = currentGlobal++;
+                    cells.push({
+                        type: 'seat',
+                        id: `seat-${globalNumber}`,
+                        globalNumber,
+                        seatInRow: currentInRow++,
+                        rowNumber,
+                    });
+                }
+
+                if (blockIndex < this.rowsLayout.length - 1) {
+                    cells.push({
+                        type: 'aisle',
+                        id: `aisle-${rowNumber}-${blockIndex}`,
+                    });
+                }
+            });
+
+            return { rowNumber, rowLabel, cells };
+        });
     }
 
     // Returns a plain object representation
@@ -118,5 +152,3 @@ export class Showing {
         });
     }
 }
-
-export { Showing, Auditorium };

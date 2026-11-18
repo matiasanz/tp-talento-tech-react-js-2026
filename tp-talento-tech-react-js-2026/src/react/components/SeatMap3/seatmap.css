@@ -1,0 +1,286 @@
+/* ==========================================
+   1. VARIABLES DE TEMA Y PROPORCIONES
+   ========================================== */
+.seat-map {
+    --color-available: #2563eb;
+    --color-available-hover: #1d4ed8;
+    --color-selected: #16a34a;
+    --color-selected-hover: #15803d;
+    --color-sold: #cbd5e1;
+    --color-sold-text: #64748b;
+    --color-danger: #dc2626;
+
+    --color-surface: #ffffff;
+    --color-surface-subtle: #f8fafc;
+    --color-border: #e2e8f0;
+    --color-text: #0f172a;
+    --color-text-muted: #64748b;
+
+    --row-label-width: 0.5fr;
+    --aisle-width: 0.35fr;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --grid-gap: clamp(4px, 1vw, 7px);
+    --shadow-seat: 0 2px 4px rgba(15, 23, 42, 0.12);
+
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 16px;
+    box-sizing: border-box;
+    text-align: center;
+    color: var(--color-text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.seat-map h3 {
+    margin: 0 0 12px;
+    font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+/* ==========================================
+   2. LEYENDA (SeatLegend)
+   ========================================== */
+.seat-map__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding: 8px 12px;
+    background-color: var(--color-surface-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.legend-item__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-item__dot--available {
+    background-color: var(--color-available);
+}
+
+.legend-item__dot--selected {
+    background-color: var(--color-selected);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.65);
+}
+
+.legend-item__dot--sold {
+    background-color: var(--color-sold);
+}
+
+/* ==========================================
+   3. PANTALLA Y CONTENEDOR DE GRILLA
+   ========================================== */
+.seat-map__screen {
+    margin: 0 0 22px clamp(24px, 6.5%, 44px);
+    padding: 7px 12px;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
+    border-top: 4px solid #94a3b8;
+    border-radius: 50% 50% 0 0 / 14px 14px 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    font-weight: 700;
+    user-select: none;
+}
+
+.seat-map__grid {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--grid-gap) * 1.35);
+    width: 100%;
+    padding: 4px 0;
+    box-sizing: border-box;
+    background: transparent;
+}
+
+/* ==========================================
+   4. FILAS Y ETIQUETAS
+   ========================================== */
+.seat-map__row {
+    display: grid;
+    grid-template-columns: var(--seat-grid-template);
+    gap: var(--grid-gap);
+    align-items: center;
+    width: 100%;
+}
+
+.seat-map__row-label {
+    background: transparent;
+    font-size: clamp(0.68rem, 1.8vw, 0.8rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+    text-align: right;
+    padding-right: 4px;
+    user-select: none;
+    white-space: nowrap;
+}
+
+/* ==========================================
+   5. BUTACAS (SeatCell)
+   ========================================== */
+.seat {
+    width: 100%;
+    min-width: 0;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    border-radius: 22% 22% 10% 10%;
+    border: none;
+    font-size: clamp(0.65rem, 1.9vw, 0.82rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.seat--available {
+    background-color: var(--color-available);
+    cursor: pointer;
+    box-shadow: var(--shadow-seat);
+}
+
+.seat--available:hover {
+    background-color: var(--color-available-hover);
+    transform: translateY(-1px) scale(1.06);
+}
+
+.seat--selected {
+    background-color: var(--color-selected);
+    cursor: pointer;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--color-selected);
+}
+
+.seat--selected:hover {
+    background-color: var(--color-selected-hover);
+    transform: translateY(-1px) scale(1.05);
+}
+
+.seat--sold {
+    background-color: var(--color-sold);
+    color: var(--color-sold-text);
+    cursor: not-allowed;
+    opacity: 0.8;
+    box-shadow: none;
+}
+
+.seat:not(:disabled):active {
+    transform: scale(0.95);
+}
+
+.seat:focus-visible {
+    outline: 3px solid var(--color-text);
+    outline-offset: 2px;
+    z-index: 1;
+}
+
+/* ==========================================
+   6. PIE DE PÁGINA (SeatFooter)
+   ========================================== */
+.seat-map__footer {
+    margin-top: 20px;
+    padding: 14px;
+    background-color: var(--color-surface-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.seat-map__summary {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    min-height: 2.8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.seat-map__hint {
+    color: var(--color-text-muted);
+}
+
+.seat-map__sold-out {
+    color: var(--color-danger);
+    font-weight: 700;
+}
+
+.seat-map__confirm-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    background-color: var(--color-selected);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.seat-map__confirm-btn:not(:disabled):hover {
+    background-color: var(--color-selected-hover);
+}
+
+.seat-map__confirm-btn:not(:disabled):active {
+    transform: scale(0.99);
+}
+
+.seat-map__confirm-btn:focus-visible {
+    outline: 3px solid var(--color-text);
+    outline-offset: 2px;
+}
+
+.seat-map__confirm-btn:disabled {
+    background-color: #cbd5e1;
+    color: #64748b;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* ==========================================
+   7. MOVIMIENTO REDUCIDO Y RESPONSIVE
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+    .seat,
+    .seat-map__confirm-btn {
+        transition: none;
+    }
+
+    .seat:not(:disabled):hover,
+    .seat:not(:disabled):active,
+    .seat-map__confirm-btn:not(:disabled):active {
+        transform: none;
+    }
+}
+
+@media (max-width: 400px) {
+    .seat-map {
+        padding: 12px 8px;
+    }
+
+    .seat-map__legend {
+        gap: 10px;
+        font-size: 0.78rem;
+    }
+}
