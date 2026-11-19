@@ -1,4 +1,6 @@
 .seat-map {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
     --aisle-width: clamp(0.6rem, 2.5vw, 1.5rem);
     --row-gap: clamp(0.45rem, 1.4vw, 0.7rem);
     --col-gap: clamp(0.25rem, 0.9vw, 0.45rem);
@@ -9,21 +11,21 @@
     --muted: #78716c;
     --border: #e7e5e4;
 
-    /* Disponible: celeste claro */
+    /* Available */
     --avail-bg: #e0f2fe;
     --avail-hover-bg: #bae6fd;
     --avail-border: #7dd3fc;
     --avail-shadow: #0284c7;
     --avail-ink: #0c4a6e;
 
-    /* Seleccionada: verde claro */
+    /* Selected */
     --sel-bg: #86efac;
     --sel-hover-bg: #4ade80;
     --sel-border: #22c55e;
     --sel-shadow: #16a34a;
     --sel-ink: #14532d;
 
-    /* Ocupada: rojo anterior */
+    /* Occupied */
     --sold-bg: #ef4444;
     --sold-border: #dc2626;
     --sold-ink: #ffffff;
@@ -129,6 +131,9 @@
 }
 
 .seat-map__row-seats {
+
+    background-color: whitesmoke;
+    border-radius: 1em;
     display: grid;
     grid-template-columns: var(--seat-grid-template, repeat(8, minmax(0, 1fr)));
     gap: var(--col-gap);
