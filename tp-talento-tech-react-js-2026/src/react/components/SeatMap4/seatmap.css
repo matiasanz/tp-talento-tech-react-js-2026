@@ -9,19 +9,24 @@
     --muted: #78716c;
     --border: #e7e5e4;
 
-    --avail-bg: #ffffff;
-    --avail-border: #d6d3d1;
-    --avail-ink: #292524;
-    --avail-hover-bg: #fffbeb;
-    --avail-hover-border: #f59e0b;
+    /* Disponible: celeste claro */
+    --avail-bg: #e0f2fe;
+    --avail-hover-bg: #bae6fd;
+    --avail-border: #7dd3fc;
+    --avail-shadow: #0284c7;
+    --avail-ink: #0c4a6e;
 
-    --sel-bg: #e11d48;
-    --sel-border: #e11d48;
-    --sel-ink: #ffffff;
+    /* Seleccionada: verde claro */
+    --sel-bg: #86efac;
+    --sel-hover-bg: #4ade80;
+    --sel-border: #22c55e;
+    --sel-shadow: #16a34a;
+    --sel-ink: #14532d;
 
-    --sold-bg: #f5f5f4;
-    --sold-border: #e7e5e4;
-    --sold-ink: #a8a29e;
+    /* Ocupada: rojo anterior */
+    --sold-bg: #ef4444;
+    --sold-border: #dc2626;
+    --sold-ink: #ffffff;
 
     display: flex;
     flex-direction: column;
@@ -74,11 +79,12 @@
 
 .legend-item__dot--selected {
     background: var(--sel-bg);
+    border: 1.5px solid var(--sel-border);
 }
 
 .legend-item__dot--sold {
     background: var(--sold-bg);
-    border: 1px solid var(--sold-border);
+    border: 1.5px solid var(--sold-border);
 }
 
 .seat-map__stage {
@@ -95,7 +101,6 @@
     height: 100%;
 }
 
-
 .seat-map__screen {
     text-align: center;
     padding: 7px 12px;
@@ -103,7 +108,7 @@
     background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
     border-top: 4px solid #94a3b8;
     border-radius: 50% 50% 0 0 / 14px 14px 0 0;
-    color: var(--color-text-muted);
+    color: var(--muted);
     font-size: 0.72rem;
     letter-spacing: 0.28em;
     font-weight: 700;
@@ -148,7 +153,7 @@
 }
 
 .seat:focus-visible {
-    outline: 2px solid #4338ca;
+    outline: 2px solid var(--avail-shadow);
     outline-offset: 2px;
 }
 
@@ -156,19 +161,24 @@
     background: var(--avail-bg);
     border-color: var(--avail-border);
     color: var(--avail-ink);
-    box-shadow: inset 0 -3px 0 var(--border);
+    box-shadow: inset 0 -3px 0 var(--avail-shadow);
 }
 
 .seat--available:hover:not(:disabled) {
     background: var(--avail-hover-bg);
-    border-color: var(--avail-hover-border);
+    border-color: var(--avail-shadow);
 }
 
 .seat--selected {
     background: var(--sel-bg);
     border-color: var(--sel-border);
     color: var(--sel-ink);
-    box-shadow: inset 0 -3px 0 #be123c;
+    box-shadow: inset 0 -3px 0 var(--sel-shadow);
+}
+
+.seat--selected:hover:not(:disabled) {
+    background: var(--sel-hover-bg);
+    border-color: var(--sel-shadow);
 }
 
 .seat--sold {
@@ -204,7 +214,7 @@
 }
 
 .seat-map__sold-out {
-    color: #be123c;
+    color: var(--sold-bg);
     font-weight: 700;
 }
 
@@ -212,20 +222,20 @@
     padding: 0.65rem 1.2rem;
     font-size: 0.88rem;
     font-weight: 600;
-    color: #ffffff;
-    background: #0f766e;
-    border: none;
+    color: var(--sel-ink);
+    background: var(--sel-bg);
+    border: 1.5px solid var(--sel-border);
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.14s ease, opacity 0.14s ease;
+    transition: background-color 0.14s ease, border-color 0.14s ease, opacity 0.14s ease;
 }
 
 .seat-map__confirm-btn:hover:not(:disabled) {
-    background: #115e59;
+    background: var(--sel-hover-bg);
+    border-color: var(--sel-shadow);
 }
 
 .seat-map__confirm-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.45;
     cursor: not-allowed;
 }
-
