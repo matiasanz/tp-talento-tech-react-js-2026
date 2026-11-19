@@ -1,75 +1,3 @@
-export class Auditorium {
-    constructor({ id, name, rowsLayout, rowsCount }) {
-        if (!id || !name) throw new Error('Auditorium must have an id and a name.');
-        if (!Array.isArray(rowsLayout) || rowsLayout.length === 0) {
-            throw new Error('rowsLayout must be a valid non-empty array.');
-        }
-        if (!rowsCount || rowsCount <= 0) {
-            throw new Error('rowsCount must be greater than 0.');
-        }
-
-        this.id = id;
-        this.name = name;
-        this.rowsLayout = rowsLayout;
-        this.rowsCount = rowsCount;
-    }
-
-    // Calculates the number of seats per row (e.g., 2 + 4 + 2 = 8)
-    get seatsPerRow() {
-        return this.rowsLayout.reduce((acc, seats) => acc + seats, 0);
-    }
-
-    // Calculates the total seating capacity (e.g., 8 * 12 = 96)
-    get totalCapacity() {
-        return this.seatsPerRow * this.rowsCount;
-    }
-
-    // Domain logic: generates the physical map of rows, seats, and aisles
-    buildLayout() {
-        const perRow = this.seatsPerRow;
-
-        return Array.from({ length: this.rowsCount }, (_, rowIndex) => {
-            const rowNumber = rowIndex + 1;
-            const rowLabel = `F${String(rowNumber).padStart(2, '0')}`;
-            const cells = [];
-            let currentGlobal = rowIndex * perRow + 1;
-            let currentInRow = 1;
-
-            this.rowsLayout.forEach((seatsInBlock, blockIndex) => {
-                for (let i = 0; i < seatsInBlock; i++) {
-                    const globalNumber = currentGlobal++;
-                    cells.push({
-                        type: 'seat',
-                        id: `seat-${globalNumber}`,
-                        globalNumber,
-                        seatInRow: currentInRow++,
-                        rowNumber,
-                    });
-                }
-
-                if (blockIndex < this.rowsLayout.length - 1) {
-                    cells.push({
-                        type: 'aisle',
-                        id: `aisle-${rowNumber}-${blockIndex}`,
-                    });
-                }
-            });
-
-            return { rowNumber, rowLabel, cells };
-        });
-    }
-
-    // Returns a plain object representation
-    toPlainObject() {
-        return {
-            id: this.id,
-            name: this.name,
-            rowsLayout: [...this.rowsLayout],
-            rowsCount: this.rowsCount
-        };
-    }
-}
-
 export class Showing {
     constructor({ id, dateTime, movieId, auditorium, soldSeats = [] }) {
         if (!id) throw new Error('Showing must have an id.');
@@ -80,36 +8,32 @@ export class Showing {
         this.dateTime = dateTime instanceof Date ? dateTime : new Date(dateTime);
         this.movieId = movieId;
         this.auditorium = auditorium instanceof Auditorium? auditorium: new Auditorium(auditorium);
-        
-        // Use a Set internally to prevent duplicates and enable O(1) lookups
         this._soldSeats = new Set(soldSeats);
+        this._availableSeatsCount = this.auditorium.totalCapacity - this._soldSeats.size;
     }
 
-    // Returns sold seat numbers sorted in ascending order
     get soldSeats() {
         return Array.from(this._soldSeats).sort((a, b) => a - b);
     }
 
-    // Returns the number of remaining available seats
     get availableSeatsCount() {
-        return this.auditorium.totalCapacity - this._soldSeats.size;
+        return this._availableSeatsCount;
     }
 
-    // Checks whether all seats have been sold
     get isSoldOut() {
-        return this.availableSeatsCount <= 0;
+        return this._availableSeatsCount <= 0;
     }
 
-    // Checks if a seat number exists within the auditorium and is not sold
     isSeatAvailable(seatNumber) {
-        const isValidSeat = Number.isInteger(seatNumber) && 
-                            seatNumber >= 1 && 
-                            seatNumber <= this.auditorium.totalCapacity;
+        const isValidSeat =
+            Number.isInteger(seatNumber) &&
+            seatNumber >= 1 &&
+            seatNumber <= this.auditorium.totalCapacity;
+
         if (!isValidSeat) return false;
         return !this._soldSeats.has(seatNumber);
     }
 
-    // Business rule: sells a list of seats after validating their availability
     sellSeats(seatNumbers) {
         if (!Array.isArray(seatNumbers) || seatNumbers.length === 0) {
             throw new Error('At least one seat number must be provided.');
@@ -124,31 +48,75 @@ export class Showing {
         for (const seat of seatNumbers) {
             this._soldSeats.add(seat);
         }
+
+        this._availableSeatsCount = this.auditorium.totalCapacity - this._soldSeats.size;
+    }
+}
+
+export class Auditorium {
+    constructor({ id, name, rowsLayout, rowsCount }) {
+        if (!id || !name) throw new Error('Auditorium must have an id and a name.');
+        if (!Array.isArray(rowsLayout) || rowsLayout.length === 0) {
+            throw new Error('rowsLayout must be a valid non-empty array.');
+        }
+        if (!rowsCount || rowsCount <= 0) {
+            throw new Error('rowsCount must be greater than 0.');
+        }
+
+        this.id = id;
+        this.name = name;
+        this.rowsLayout = [...rowsLayout];
+        this.rowsCount = rowsCount;
+
+        this._seatsPerRow = this.rowsLayout.reduce((acc, seats) => acc + seats, 0);
+        this._totalCapacity = this._seatsPerRow * this.rowsCount;
     }
 
-    // Serializes the entity into a plain object ready for Firestore persistence
-    toPersistence() {
-        return {
-            id: this.id,
-            dateTime: this.dateTime.toISOString(),
-            movieId: this.movieId,
-            auditorium: this.auditorium.toPlainObject(),
-            soldSeats: this.soldSeats
-        };
+    get seatsPerRow() {
+        return this._seatsPerRow;
     }
 
-    // Reconstructs the domain entity from a raw Firestore document
-    static fromPersistence(data) {
-        // Supports both native Firestore Timestamps and ISO date strings
-        const parsedDate = data.dateTime && typeof data.dateTime.toDate === 'function'?
-            data.dateTime.toDate(): new Date(data.dateTime);
+    get totalCapacity() {
+        return this._totalCapacity;
+    }
+}
 
-        return new Showing({
-            id: data.id,
-            dateTime: parsedDate,
-            movieId: data.movieId,
-            auditorium: data.auditorium,
-            soldSeats: data.soldSeats || []
-        });
+export class SeatSelection {
+    constructor(showing, options = {}) {
+        this.showing = showing;
+        this.maxSeats = options.maxSeatsPerPurchase ?? Infinity;
+        this._selectedSeats = new Set();
+    }
+
+    get selectedSeats() {
+        return Array.from(this._selectedSeats).sort((a, b) => a - b);
+    }
+
+    get count() {
+        return this._selectedSeats.size;
+    }
+
+    get isEmpty() {
+        return this.count === 0;
+    }
+
+    toggle(seatNumber) {
+        if (this._selectedSeats.has(seatNumber)) {
+            this._selectedSeats.delete(seatNumber);
+            return
+        }
+
+        if(!this.canAddNewSeat(seatNumber))
+            throw new Error('tried to add invalid seat')
+
+        this._selectedSeats.add(seatNumber);
+    }
+
+    clear() {
+        this._selectedSeats.clear();
+    }
+
+    canAddNewSeat(seatNumber) {
+        return this.showing.isSeatAvailable(seatNumber) && (this._selectedSeats.size < this.maxSeats)
     }
 }

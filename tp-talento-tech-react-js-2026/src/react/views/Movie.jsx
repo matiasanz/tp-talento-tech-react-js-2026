@@ -12,7 +12,7 @@ import moviesRepo from "../../js/repositories/movies_read_repo"
 import Loading from "../components/Loading"
 import showingsRepo from "../../js/repositories/showings_repo"
 
-import { SeatMap } from "../components/SeatMap3"
+import { SeatMap } from "../components/SeatMap4"
 
 export default () => {
     const {handleError} = useErrorHandler()
