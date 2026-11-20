@@ -1,91 +1,128 @@
-import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import { Showing, SeatSelection } from '../../../js/domain/showings';
 import './seatmap.css';
 
-export function SeatMap({ showing, maxSeatsPerPurchase, onConfirmPurchase }) {
+export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurchase }) {
     const showingEntity = useMemo(
         () => (showing instanceof Showing ? showing : new Showing(showing)),
         [showing]
     );
 
     const { auditorium } = showingEntity;
-
-    const {
-        selectedSeats,
-        toggleSeat,
-        clearSelection,
-        getSeatStatus,
-        isSeatDisabled,
-    } = useSeatSelection(showingEntity, { maxSeatsPerPurchase });
-
-    const rowLabels = useMemo(
-        () => buildRowLabels(auditorium.rowsCount),
-        [auditorium.rowsCount]
+    const { selection, toggleSeat, clearSelection } = useSeatSelection(
+        showingEntity,
+        maxSeatsPerPurchase
     );
 
-    const seatsMatrix = useMemo(
-        () => buildSeatsMatrix(auditorium),
-        [auditorium]
-    );
-
-    const seatsGridTemplate = useMemo(
-        () => buildSeatsGridTemplate(auditorium.rowsLayout),
+    const gridTemplate = useMemo(
+        () => auditorium.rowsLayout.map((n) => `repeat(${n}, minmax(0, 1fr))`).join(' var(--aisle-width, 1rem) '),
         [auditorium.rowsLayout]
     );
 
-    const seatLabelsByNumber = useMemo(
-        () => buildSeatLabelsMap(seatsMatrix),
-        [seatsMatrix]
-    );
-
     const handleConfirm = () => {
-        onConfirmPurchase?.(showingEntity.id, selectedSeats, clearSelection);
+        onConfirmPurchase?.(showingEntity.id, selection.selectedSeats, clearSelection);
     };
 
     return (
-        <div className="seat-map">
-            <h3>Sala {auditorium.name}</h3>
+        <section className="seat-map" aria-labelledby="seat-map-title">
+            <h3 id="seat-map-title">Sala {auditorium.name}</h3>
             <SeatLegend />
 
-            <div className="seat-map__stage">
+            <div className="seat-map__stage" role="grid" aria-label="Mapa de butacas">
                 <div aria-hidden="true" className="seat-map__corner" />
-                <div className="seat-map__screen-area">
+                <div className="seat-map__screen-area" role="presentation">
                     <div className="seat-map__screen">PANTALLA</div>
                 </div>
 
-                {seatsMatrix.map((rowCells, rowIndex) => (
-                    <Fragment key={rowLabels[rowIndex] ?? rowIndex}>
-                        <span className="seat-map__row-label">
-                            {rowLabels[rowIndex]}
-                        </span>
-
-                        <div
-                            className="seat-map__row-seats"
-                            style={{ '--seat-grid-template': seatsGridTemplate }}
-                        >
-                            {rowCells.map((cell) => (
-                                <SeatCell
-                                    key={cell.id}
-                                    cell={cell}
-                                    rowLabel={rowLabels[rowIndex]}
-                                    status={getSeatStatus(cell.globalNumber)}
-                                    disabled={isSeatDisabled(cell.globalNumber)}
-                                    onToggle={toggleSeat}
-                                />
-                            ))}
-                        </div>
-                    </Fragment>
+                {Array.from({ length: auditorium.rowsCount }, (_, rowIndex) => (
+                    <SeatRow
+                        key={rowIndex}
+                        rowIndex={rowIndex}
+                        auditorium={auditorium}
+                        gridTemplate={gridTemplate}
+                        showing={showingEntity}
+                        selection={selection}
+                        onToggle={toggleSeat}
+                    />
                 ))}
             </div>
 
             <SeatFooter
-                selectedSeats={selectedSeats}
-                seatLabelsByNumber={seatLabelsByNumber}
+                selection={selection}
+                seatsPerRow={auditorium.seatsPerRow}
                 availableCount={showingEntity.availableSeatsCount}
                 isSoldOut={showingEntity.isSoldOut}
                 onConfirm={handleConfirm}
             />
-        </div>
+        </section>
+    );
+}
+
+const SeatRow = memo(function SeatRow({ rowIndex, auditorium, gridTemplate, showing, selection, onToggle }) {
+    const { rowsLayout, seatsPerRow } = auditorium;
+    const rowLabel = formatRowLabel(rowIndex + 1);
+    const rowStart = rowIndex * seatsPerRow;
+    let seatOffset = 0;
+
+    return (
+        <>
+            <span className="seat-map__row-label" aria-hidden="true">
+                {rowLabel}
+            </span>
+
+            <div
+                role="row"
+                className="seat-map__row-seats"
+                style={{ '--seat-grid-template': gridTemplate }}
+            >
+                {rowsLayout.flatMap((blockSize, blockIndex) => {
+                    const blockStart = seatOffset;
+                    seatOffset += blockSize;
+
+                    const seats = Array.from({ length: blockSize }, (_, i) => {
+                        const seatInRow = blockStart + i + 1;
+                        const globalNumber = rowStart + seatInRow;
+                        const isAvailable = showing.isSeatAvailable(globalNumber);
+                        const isSelected = selection.hasSeat(globalNumber);
+                        const status = !isAvailable ? 'sold' : isSelected ? 'selected' : 'available';
+                        const disabled = !isAvailable || (!isSelected && !selection.canAddNewSeat(globalNumber));
+
+                        return (
+                            <SeatCell
+                                key={globalNumber}
+                                globalNumber={globalNumber}
+                                rowLabel={rowLabel}
+                                seatInRow={seatInRow}
+                                status={status}
+                                disabled={disabled}
+                                onToggle={onToggle}
+                            />
+                        );
+                    });
+
+                    return blockIndex > 0
+                        ? [<div key={`aisle-${blockIndex}`} aria-hidden="true" />, ...seats]
+                        : seats;
+                })}
+            </div>
+        </>
+    );
+});
+
+function SeatCell({ globalNumber, rowLabel, seatInRow, status, disabled, onToggle }) {
+    const label = `Fila ${rowLabel}, Butaca ${seatInRow}`;
+
+    return (
+        <button
+            type="button"
+            role="gridcell"
+            disabled={disabled}
+            aria-pressed={status === 'selected'}
+            aria-label={label}
+            title={label}
+            onClick={() => onToggle(globalNumber)}
+            className={`seat seat--${status}`}
+        />
     );
 }
 
@@ -108,44 +145,21 @@ function SeatLegend() {
     );
 }
 
-function SeatCell({ cell, rowLabel, status, disabled, onToggle }) {
-    if (cell.type === 'aisle') {
-        return <div aria-hidden="true" />;
-    }
-
-    const label = `Fila ${rowLabel}, Butaca ${cell.seatInRow}`;
-
-    return (
-        <button
-            type="button"
-            disabled={disabled}
-            aria-pressed={status === 'selected'}
-            aria-label={label}
-            title={label}
-            onClick={() => onToggle(cell.globalNumber)}
-            className={`seat seat--${status}`}
-        >
-        </button>
-    );
-}
-
-function SeatFooter({ selectedSeats, seatLabelsByNumber, availableCount, isSoldOut, onConfirm }) {
-    const hasSelection = selectedSeats.length > 0;
-
+function SeatFooter({ selection, seatsPerRow, availableCount, isSoldOut, onConfirm }) {
     return (
         <div className="seat-map__footer">
             <p className="seat-map__summary">
                 {isSoldOut ? (
                     <span className="seat-map__sold-out">Función agotada</span>
-                ) : hasSelection ? (
+                ) : !selection.isEmpty ? (
                     <>
                         Butacas seleccionadas:{' '}
                         <strong>
-                            {selectedSeats
-                                .map((num) => seatLabelsByNumber.get(num) ?? `#${num}`)
+                            {selection.selectedSeats
+                                .map((num) => formatSeatLabel(num, seatsPerRow))
                                 .join(', ')}
                         </strong>{' '}
-                        ({selectedSeats.length})
+                        ({selection.count})
                     </>
                 ) : (
                     <span className="seat-map__hint">
@@ -156,144 +170,45 @@ function SeatFooter({ selectedSeats, seatLabelsByNumber, availableCount, isSoldO
 
             <button
                 type="button"
-                disabled={!hasSelection || isSoldOut}
+                disabled={selection.isEmpty || isSoldOut}
                 onClick={onConfirm}
                 className="seat-map__confirm-btn"
             >
-                Confirmar Compra ({selectedSeats.length})
+                Confirmar Compra ({selection.count})
             </button>
         </div>
     );
 }
 
-function useSeatSelection(showingEntity, options) {
-    const [selectedSeats, setSelectedSeats] = useState([]);
-    const maxSeats = options?.maxSeatsPerPurchase ?? Infinity;
+function useSeatSelection(showingEntity, maxSeatsPerPurchase) {
+    const [rawSelection, setRawSelection] = useState(
+        () => new SeatSelection(showingEntity, maxSeatsPerPurchase)
+    );
 
-    useEffect(() => {
-        setSelectedSeats((prev) =>
-            prev.filter((seatNumber) => showingEntity.isSeatAvailable(seatNumber))
-        );
-    }, [showingEntity]);
+    const selection = rawSelection.syncWithShowing(showingEntity, maxSeatsPerPurchase);
 
     const toggleSeat = useCallback(
         (seatNumber) => {
-            setSelectedSeats((prev) => {
-                const selection = createSelectionFromState(showingEntity, prev, maxSeats);
-
-                if (prev.includes(seatNumber)) {
-                    selection.toggle(seatNumber);
-                    return selection.selectedSeats;
-                }
-
-                if (!selection.canAddNewSeat(seatNumber)) {
-                    return prev;
-                }
-
-                selection.toggle(seatNumber);
-                return selection.selectedSeats;
-            });
+            setRawSelection((prev) =>
+                prev.syncWithShowing(showingEntity, maxSeatsPerPurchase).toggle(seatNumber)
+            );
         },
-        [showingEntity, maxSeats]
+        [showingEntity, maxSeatsPerPurchase]
     );
 
     const clearSelection = useCallback(() => {
-        setSelectedSeats([]);
+        setRawSelection((prev) => prev.clear());
     }, []);
 
-    const getSeatStatus = useCallback(
-        (seatNumber) => {
-            if (!showingEntity.isSeatAvailable(seatNumber)) return 'sold';
-            if (selectedSeats.includes(seatNumber)) return 'selected';
-            return 'available';
-        },
-        [showingEntity, selectedSeats]
-    );
-
-    const isSeatDisabled = useCallback(
-        (seatNumber) => {
-            if (!showingEntity.isSeatAvailable(seatNumber)) return true;
-            if (selectedSeats.includes(seatNumber)) return false;
-            return selectedSeats.length >= maxSeats;
-        },
-        [showingEntity, selectedSeats, maxSeats]
-    );
-
-    return {
-        selectedSeats,
-        toggleSeat,
-        clearSelection,
-        getSeatStatus,
-        isSeatDisabled,
-    };
+    return { selection, toggleSeat, clearSelection };
 }
 
-function createSelectionFromState(showingEntity, currentSeats, maxSeats) {
-    const selection = new SeatSelection(showingEntity, { maxSeatsPerPurchase: maxSeats });
-    for (const seatNumber of currentSeats) {
-        if (selection.canAddNewSeat(seatNumber)) {
-            selection.toggle(seatNumber);
-        }
-    }
-    return selection;
+function formatRowLabel(rowNumber) {
+    return `F${String(rowNumber).padStart(2, '0')}`;
 }
 
-function buildRowLabels(rowsCount) {
-    return Array.from({ length: rowsCount }, (_, index) =>
-        `F${String(index + 1).padStart(2, '0')}`
-    );
-}
-
-function buildSeatsMatrix(auditorium) {
-    const perRow = auditorium.seatsPerRow;
-
-    return Array.from({ length: auditorium.rowsCount }, (_, rowIndex) => {
-        const rowNumber = rowIndex + 1;
-        const cells = [];
-        let currentGlobal = rowIndex * perRow + 1;
-        let currentInRow = 1;
-
-        auditorium.rowsLayout.forEach((seatsInBlock, blockIndex) => {
-            for (let i = 0; i < seatsInBlock; i++) {
-                const globalNumber = currentGlobal++;
-                cells.push({
-                    type: 'seat',
-                    id: `seat-${globalNumber}`,
-                    globalNumber,
-                    seatInRow: currentInRow++,
-                    rowNumber,
-                });
-            }
-
-            if (blockIndex < auditorium.rowsLayout.length - 1) {
-                cells.push({
-                    type: 'aisle',
-                    id: `aisle-${rowNumber}-${blockIndex}`,
-                });
-            }
-        });
-
-        return cells;
-    });
-}
-
-function buildSeatsGridTemplate(rowsLayout) {
-    return rowsLayout
-        .map((blockSize) => `repeat(${blockSize}, minmax(0, 1fr))`)
-        .join(' var(--aisle-width) ');
-}
-
-function buildSeatLabelsMap(seatsMatrix) {
-    const map = new Map();
-
-    seatsMatrix.forEach((rowCells, rowIndex) => {
-        const rowLabel = `F${String(rowIndex + 1).padStart(2, '0')}`;
-        for (const cell of rowCells) {
-            if (cell.type === 'seat') {
-                map.set(cell.globalNumber, `${rowLabel}-${cell.seatInRow}`);
-            }
-        }
-    });
-
-    return map;
+function formatSeatLabel(globalNumber, seatsPerRow) {
+    const row = Math.floor((globalNumber - 1) / seatsPerRow) + 1;
+    const seat = ((globalNumber - 1) % seatsPerRow) + 1;
+    return `${formatRowLabel(row)}-${seat}`;
 }
