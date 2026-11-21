@@ -3,6 +3,7 @@ import paths from "../router/paths"
 import {useCart} from "../context/cart"
 import { ShowingItemDetail } from "../../js/domain/cart"
 import { formatRowLabel } from "../components/SeatMap/utils"
+import { formatDateTime } from "../../js/domain/formatters"
 
 export default () =>  { 
     const cart = useCart()
@@ -45,12 +46,8 @@ const ShowingItem = ({movie, showing, seats}) => (<>
     <li>
         <Link to={paths.PRODUCT(movie.id)}>{movie.title}</Link>    
     </li>
-    <li>
-        Sala {showing.auditorium.name}
-    </li>
-    <li>
-        {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}
-    </li>
+    <li>{formatDateTime(showing.dateTime)} Sala {showing.auditorium.name}</li>
+    <li>Butacas {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}</li>
 </>)
 
 function onClickDeleteItem(itemId, cart){

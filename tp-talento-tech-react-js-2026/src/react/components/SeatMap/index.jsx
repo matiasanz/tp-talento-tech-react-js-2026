@@ -174,7 +174,7 @@ function SeatFooter({ selection, availableCount, isSoldOut, onConfirm, onClearSe
                 onClick={onConfirm}
                 className="seat-map__confirm-btn"
             >
-                Confirmar Compra
+                Confirmar selección
             </button>
             <button
                 type="button"
