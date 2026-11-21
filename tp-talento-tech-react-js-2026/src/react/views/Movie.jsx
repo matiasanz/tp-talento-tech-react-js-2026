@@ -6,7 +6,7 @@ import paths from "../router/paths"
 import { useErrorHandler } from "../context/error_handler"
 
 import { useCart } from "../context/cart"
-import { Item } from "../../js/domain/cart"
+import { buildShowingItem } from "../../js/domain/cart"
 
 import moviesRepo from "../../js/repositories/movies_read_repo"
 import Loading from "../components/Loading"
@@ -22,7 +22,7 @@ export default () => {
     const navigate = useNavigate()
     const cart = useCart()
     const [showings, setShowings] = useState([]) 
-    const [selectedShowing, setSelectedShowing] = useState(null)
+    const [selectedShowingId, setSelectedShowingId] = useState(null)
 
     useEffect(()=>{
         moviesRepo.findById(productId)
@@ -35,6 +35,9 @@ export default () => {
     
     }, [productId])
 
+    const findShowing = showingId => showings.find(({id})=>showingId === id)
+    const onConfirmPurchase = seats=>onClickAddTicketToCart(cart, movie, findShowing(selectedShowingId), seats, navigate)
+
     return (
         <>
             <Loading isLoaded={movie}>
@@ -42,7 +45,7 @@ export default () => {
             </Loading>
 
             <Loading isLoaded={showings.length}>
-                <form onSubmit={()=>onClickAddTicketToCart(cart, movie, navigate)}>
+                <form>
                     {
                         showings.map( ({id, dateTime}, index) =>{                            
                             return <div key={`showing-${id}`}>
@@ -51,24 +54,22 @@ export default () => {
                                 <input type="radio"
                                     id={`showing-${id}-input`} name="showingSelection"
                                     value={id} 
-                                    onChange={ onChangeSelectedShowing(setSelectedShowing) } 
+                                    onChange={ onChangeSelectedShowing(setSelectedShowingId) } 
                                 />
                                 <label htmlFor={`showing-${id}-input`}>{formatDateTime(dateTime)}</label>
                             </div>
                         })
                     }
 
-                    {selectedShowing && <SeatMap showing={showings.filter(({id})=>selectedShowing === id)[0]} onConfirmPurchase={()=>console.log('confirmed purchase')}></SeatMap>}
-
-                    <input type="submit" value="Comprar entrada"/>
+                    {selectedShowingId && <SeatMap showing={findShowing(selectedShowingId)} onConfirmPurchase={onConfirmPurchase}></SeatMap>}
                 </form>
             </Loading>
         </>
     )
 }
 
-function onClickAddTicketToCart(cart, movie, navigate){
-    cart.addItem(new Item(movie.id, movie.title, 1))
+function onClickAddTicketToCart(cart, movie, selectedShowing, seats, navigate){
+    cart.addItem(buildShowingItem(movie, selectedShowing, seats))
     navigate(paths.CART)
 }
 

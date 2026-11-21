@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, memo } from 'react';
 import { Showing, SeatSelection } from '../../../js/domain/showings';
+import { formatRowLabel } from './utils';
 import './seatmap.css';
 
 export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurchase }) {
@@ -20,7 +21,7 @@ export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurc
     );
 
     const handleConfirm = () => {
-        onConfirmPurchase?.(showingEntity.id, selection.selectedSeats);
+        onConfirmPurchase?.(selection.selectedSeats);
     };
 
     return (
@@ -62,7 +63,8 @@ export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurc
 
 const SeatRow = memo(function SeatRow({ rowIndex, auditorium, gridTemplate, showing, selection, onToggle }) {
     const { rowsLayout, seatsPerRow } = auditorium;
-    const rowLabel = formatRowLabel(rowIndex + 1);
+    const rowNumber = rowIndex + 1
+    const rowLabel = formatRowLabel(rowNumber);
     const rowStart = rowIndex * seatsPerRow;
     let seatOffset = 0;
 
@@ -93,7 +95,7 @@ const SeatRow = memo(function SeatRow({ rowIndex, auditorium, gridTemplate, show
                             <SeatCell
                                 key={globalNumber}
                                 globalNumber={globalNumber}
-                                rowLabel={rowLabel}
+                                rowLabel={String(rowNumber).padStart(2, "0")}
                                 seatInRow={seatInRow}
                                 status={status}
                                 disabled={disabled}
@@ -206,14 +208,4 @@ function useSeatSelection(showingEntity, maxSeatsPerPurchase) {
     }, []);
 
     return { selection, toggleSeat, clearSelection };
-}
-
-function formatRowLabel(rowNumber) {
-    return `F${String(rowNumber).padStart(2, '0')}`;
-}
-
-function formatSeatLabel(globalNumber, seatsPerRow) {
-    const row = Math.floor((globalNumber - 1) / seatsPerRow) + 1;
-    const seat = ((globalNumber - 1) % seatsPerRow) + 1;
-    return `${formatRowLabel(row)}-${seat}`;
 }

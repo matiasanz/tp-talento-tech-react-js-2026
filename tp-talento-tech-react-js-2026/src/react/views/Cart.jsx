@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
 import paths from "../router/paths"
 import {useCart} from "../context/cart"
+import { ShowingItemDetail } from "../../js/domain/cart"
+import { formatRowLabel } from "../components/SeatMap/utils"
 
 export default () =>  { 
     const cart = useCart()
@@ -9,7 +11,7 @@ export default () =>  {
             { cart.items.map(i => Item(i, cart)) }
         </ul>
 
-        <p><i>Los asientos se asignan al ingresar al establecimiento.</i></p>
+        <p><i>Los asientos se confirman al ingresar al establecimiento.</i></p>
 
         <button onClick={()=>onClickClearCart(cart)}>
             <img src="/assets/icons/delete.svg"/>
@@ -18,27 +20,58 @@ export default () =>  {
     </>): (<p>Aún no has marcado ningún item. ¿Qué esperas?</p>)
 }
 
-const Item = ({id, detail, quantity}, cart) => (
-    <li key={id}>
-        <h2>Item #{id}</h2>
-        <ul>
-            <li>
-                <Link to={paths.PRODUCT(id)}>{detail}</Link>    
-            </li>
-            <li>{quantity}</li>
-        </ul>
+const Item = (item, cart) => {
 
-        <button onClick={()=>onClickDeleteItem(id, cart)}>
-            <img src="/assets/icons/delete.svg"/>
-            Eliminar
-        </button>
-    </li>   
+    const {id, detail, quantity} = item
+    return (
+        <li key={id}>
+            <h2>Item #{id}</h2>
+            <ul>
+                {
+                    detail instanceof ShowingItemDetail && (<ShowingItem {...detail}/>)
+                }
+                <li>Total: {quantity}</li>
+            </ul>
+
+            <button onClick={()=>onClickDeleteItem(id, cart)}>
+                <img src="/assets/icons/delete.svg"/>
+                Eliminar
+            </button>
+        </li>   
+    )
+}
+
+const ShowingItem = (item) => {
+    
+    const {movie, showing, seats} = item
+    
+    console.log(JSON.stringify(item))
+
+    return (
+    <>
+        <li>
+            <Link to={paths.PRODUCT(movie.id)}>{movie.title}</Link>    
+        </li>
+        <li>
+            Sala {showing.auditorium.name}
+        </li>
+        <li>
+            {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}
+        </li>
+    </>
 )
-
+}
 function onClickDeleteItem(itemId, cart){
     cart.removeItemById(itemId)
 }
 
 function onClickClearCart(cart){
     cart.clear()
+}
+
+function formatSeatLabel(showing, seat) {
+    const {seatsPerRow} = showing.auditorium
+    const row = Math.floor((seat - 1) / seatsPerRow) + 1;
+    const column = ((seat - 1) % seatsPerRow) + 1;
+    return `${formatRowLabel(row)}-${column}`;
 }
