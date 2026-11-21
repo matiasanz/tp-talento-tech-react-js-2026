@@ -9,6 +9,7 @@ import { useCart } from "../context/cart"
 import { Item } from "../../js/domain/cart"
 
 import moviesRepo from "../../js/repositories/movies_read_repo"
+import Loading from "../components/Loading"
 
 export default () => {
     const {handleError} = useErrorHandler()
@@ -26,7 +27,9 @@ export default () => {
 
     return (
         <>
-            <MovieEntry {...movie}/>
+            <Loading isLoaded={movie.id}>
+                <MovieEntry {...movie}/>
+            </Loading>
             <button onClick={()=>onClickAddTicketToCart(cart, movie, navigate)}>Comprar entrada</button>
         </>
     )
