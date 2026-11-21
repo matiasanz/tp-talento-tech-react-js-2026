@@ -41,26 +41,18 @@ const Item = (item, cart) => {
     )
 }
 
-const ShowingItem = (item) => {
-    
-    const {movie, showing, seats} = item
-    
-    console.log(JSON.stringify(item))
+const ShowingItem = ({movie, showing, seats}) => (<>
+    <li>
+        <Link to={paths.PRODUCT(movie.id)}>{movie.title}</Link>    
+    </li>
+    <li>
+        Sala {showing.auditorium.name}
+    </li>
+    <li>
+        {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}
+    </li>
+</>)
 
-    return (
-    <>
-        <li>
-            <Link to={paths.PRODUCT(movie.id)}>{movie.title}</Link>    
-        </li>
-        <li>
-            Sala {showing.auditorium.name}
-        </li>
-        <li>
-            {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}
-        </li>
-    </>
-)
-}
 function onClickDeleteItem(itemId, cart){
     cart.removeItemById(itemId)
 }
