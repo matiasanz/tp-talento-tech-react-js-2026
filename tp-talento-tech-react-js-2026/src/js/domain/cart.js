@@ -36,3 +36,21 @@ export class Item {
         this.quantity = quantity;
     }
 }
+
+export class ShowingItemDetail{
+    constructor(movie, showing, seats){
+        this.movie = movie
+        this.showing = showing
+        this.seats = seats
+    }   
+
+
+}
+
+export function buildShowingItem(movie, showing, seats){
+    return new Item(
+        showing.id,
+        new ShowingItemDetail(movie, showing, seats),
+         seats.length
+    )
+}
