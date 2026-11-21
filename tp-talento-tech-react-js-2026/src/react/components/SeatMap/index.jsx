@@ -51,7 +51,6 @@ export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurc
 
             <SeatFooter
                 selection={selection}
-                seatsPerRow={auditorium.seatsPerRow}
                 availableCount={showingEntity.availableSeatsCount}
                 isSoldOut={showingEntity.isSoldOut}
                 onConfirm={handleConfirm}
@@ -148,7 +147,7 @@ function SeatLegend() {
     );
 }
 
-function SeatFooter({ selection, seatsPerRow, availableCount, isSoldOut, onConfirm, onClearSelection }) {
+function SeatFooter({ selection, availableCount, isSoldOut, onConfirm, onClearSelection }) {
     return (
         <div className="seat-map__footer">
             <p className="seat-map__summary">
@@ -157,12 +156,7 @@ function SeatFooter({ selection, seatsPerRow, availableCount, isSoldOut, onConfi
                 ) : !selection.isEmpty ? (
                     <>
                         Butacas seleccionadas:{' '}
-                        <strong>
-                            {selection.selectedSeats
-                                .map((num) => formatSeatLabel(num, seatsPerRow))
-                                .join(', ')}
-                        </strong>{' '}
-                        ({selection.count})
+                        {String(selection.count).padStart(2, 0)}
                     </>
                 ) : (
                     <span className="seat-map__hint">
@@ -177,7 +171,7 @@ function SeatFooter({ selection, seatsPerRow, availableCount, isSoldOut, onConfi
                 onClick={onConfirm}
                 className="seat-map__confirm-btn"
             >
-                Confirmar Compra ({selection.count})
+                Confirmar Compra
             </button>
             <button
                 type="button"
