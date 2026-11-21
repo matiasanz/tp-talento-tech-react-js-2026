@@ -12,6 +12,8 @@ import moviesRepo from "../../js/repositories/movies_read_repo"
 import Loading from "../components/Loading"
 import showingsRepo from "../../js/repositories/showings_repo"
 
+import { SeatMap } from "../components/SeatMap"
+
 export default () => {
     const {handleError} = useErrorHandler()
 
@@ -55,6 +57,8 @@ export default () => {
                             </div>
                         })
                     }
+
+                    {selectedShowing && <SeatMap showing={showings.filter(({id})=>selectedShowing === id)[0]} onConfirmPurchase={()=>console.log('confirmed purchase')}></SeatMap>}
 
                     <input type="submit" value="Comprar entrada"/>
                 </form>

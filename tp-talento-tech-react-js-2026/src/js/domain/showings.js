@@ -10,29 +10,21 @@ export class Auditorium {
 
         this.id = id;
         this.name = name;
-        this.rowsLayout = rowsLayout;
+        this.rowsLayout = Object.freeze([...rowsLayout]);
         this.rowsCount = rowsCount;
-    }
-    
 
-    // Calculates the number of seats per row (e.g., 2 + 4 + 2 = 8)
+        this._seatsPerRow = this.rowsLayout.reduce((acc, seats) => acc + seats, 0);
+        this._totalCapacity = this._seatsPerRow * this.rowsCount;
+
+        Object.freeze(this);
+    }
+
     get seatsPerRow() {
-        return this.rowsLayout.reduce((acc, seats) => acc + seats, 0);
+        return this._seatsPerRow;
     }
 
-    // Calculates the total seating capacity (e.g., 8 * 12 = 96)
     get totalCapacity() {
-        return this.seatsPerRow * this.rowsCount;
-    }
-
-    // Returns a plain object representation
-    toPlainObject() {
-        return {
-            id: this.id,
-            name: this.name,
-            rowsLayout: [...this.rowsLayout],
-            rowsCount: this.rowsCount
-        };
+        return this._totalCapacity;
     }
 }
 
@@ -45,78 +37,93 @@ export class Showing {
         this.id = id;
         this.dateTime = dateTime instanceof Date ? dateTime : new Date(dateTime);
         this.movieId = movieId;
-        this.auditorium = auditorium instanceof Auditorium? auditorium: new Auditorium(auditorium);
-        
-        // Use a Set internally to prevent duplicates and enable O(1) lookups
+        this.auditorium = auditorium instanceof Auditorium ? auditorium : new Auditorium(auditorium);
         this._soldSeats = new Set(soldSeats);
+
+        Object.freeze(this);
     }
 
-    // Returns sold seat numbers sorted in ascending order
     get soldSeats() {
         return Array.from(this._soldSeats).sort((a, b) => a - b);
     }
 
-    // Returns the number of remaining available seats
     get availableSeatsCount() {
         return this.auditorium.totalCapacity - this._soldSeats.size;
     }
 
-    // Checks whether all seats have been sold
     get isSoldOut() {
         return this.availableSeatsCount <= 0;
     }
 
-    // Checks if a seat number exists within the auditorium and is not sold
     isSeatAvailable(seatNumber) {
-        const isValidSeat = Number.isInteger(seatNumber) && 
-                            seatNumber >= 1 && 
-                            seatNumber <= this.auditorium.totalCapacity;
-        if (!isValidSeat) return false;
-        return !this._soldSeats.has(seatNumber);
-    }
-
-    // Business rule: sells a list of seats after validating their availability
-    sellSeats(seatNumbers) {
-        if (!Array.isArray(seatNumbers) || seatNumbers.length === 0) {
-            throw new Error('At least one seat number must be provided.');
-        }
-
-        for (const seat of seatNumbers) {
-            if (!this.isSeatAvailable(seat)) {
-                throw new Error(`Seat ${seat} is invalid or already sold.`);
-            }
-        }
-
-        for (const seat of seatNumbers) {
-            this._soldSeats.add(seat);
-        }
-    }
-
-    // Serializes the entity into a plain object ready for Firestore persistence
-    toPersistence() {
-        return {
-            id: this.id,
-            dateTime: this.dateTime.toISOString(),
-            movieId: this.movieId,
-            auditorium: this.auditorium.toPlainObject(),
-            soldSeats: this.soldSeats
-        };
-    }
-
-    // Reconstructs the domain entity from a raw Firestore document
-    static fromPersistence(data) {
-        // Supports both native Firestore Timestamps and ISO date strings
-        const parsedDate = data.dateTime && typeof data.dateTime.toDate === 'function'?
-            data.dateTime.toDate(): new Date(data.dateTime);
-
-        return new Showing({
-            id: data.id,
-            dateTime: parsedDate,
-            movieId: data.movieId,
-            auditorium: data.auditorium,
-            soldSeats: data.soldSeats || []
-        });
+        return (
+            Number.isInteger(seatNumber) &&
+            seatNumber >= 1 &&
+            seatNumber <= this.auditorium.totalCapacity &&
+            !this._soldSeats.has(seatNumber)
+        );
     }
 }
 
-export { Showing, Auditorium };
+export class SeatSelection {
+    constructor(showing, maxSeats = Infinity, initialSeats = []) {
+        this.showing = showing;
+        this.maxSeats = maxSeats;
+        this._selectedSeats = new Set(
+            [...initialSeats]
+                .filter((seat) => showing.isSeatAvailable(seat))
+                .slice(0, maxSeats)
+        );
+
+        Object.freeze(this);
+    }
+
+    get selectedSeats() {
+        return Array.from(this._selectedSeats).sort((a, b) => a - b);
+    }
+
+    get count() {
+        return this._selectedSeats.size;
+    }
+
+    get isEmpty() {
+        return this.count === 0;
+    }
+
+    hasSeat(seatNumber) {
+        return this._selectedSeats.has(seatNumber);
+    }
+
+    canAddNewSeat(seatNumber) {
+        return this.showing.isSeatAvailable(seatNumber) && this._selectedSeats.size < this.maxSeats;
+    }
+
+    toggle(seatNumber) {
+        const nextSeats = new Set(this._selectedSeats);
+
+        if (nextSeats.has(seatNumber)) {
+            nextSeats.delete(seatNumber);
+            return new SeatSelection(this.showing, this.maxSeats, nextSeats);
+        }
+
+        if (!this.canAddNewSeat(seatNumber)) {
+            return this;
+        }
+
+        nextSeats.add(seatNumber);
+        return new SeatSelection(this.showing, this.maxSeats, nextSeats);
+    }
+
+    clear() {
+        if (this.isEmpty) return this;
+        return new SeatSelection(this.showing, this.maxSeats);
+    }
+
+    syncWithShowing(nextShowing, nextMaxSeats = this.maxSeats) {
+        if (this.showing === nextShowing && this.maxSeats === nextMaxSeats) {
+            return this;
+        }
+
+        return new SeatSelection(nextShowing, nextMaxSeats, this._selectedSeats);
+    }
+}

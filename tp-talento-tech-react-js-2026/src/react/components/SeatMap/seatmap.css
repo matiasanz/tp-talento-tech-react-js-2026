@@ -1,0 +1,268 @@
+.seat-map {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    --aisle-width: clamp(0.6rem, 2.5vw, 1.5rem);
+    --row-gap: clamp(0.45rem, 1.4vw, 0.7rem);
+    --col-gap: clamp(0.25rem, 0.9vw, 0.45rem);
+    --seat-size: clamp(1.45rem, 4.2vw, 2.25rem);
+
+    --surface: #ffffff;
+    --ink: #1c1917;
+    --muted: #78716c;
+    --border: #e7e5e4;
+
+    /* Available */
+    --avail-bg: #e0f2fe;
+    --avail-hover-bg: #bae6fd;
+    --avail-border: #7dd3fc;
+    --avail-shadow: #0284c7;
+    --avail-ink: #0c4a6e;
+
+    /* Selected */
+    --sel-bg: #86efac;
+    --sel-hover-bg: #4ade80;
+    --sel-border: #22c55e;
+    --sel-shadow: #16a34a;
+    --sel-ink: #14532d;
+
+    /* Occupied */
+    --sold-bg: #ef4444;
+    --sold-border: #dc2626;
+    --sold-ink: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-sizing: border-box;
+}
+
+.seat-map h3 {
+    margin: 0;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 700;
+    text-align: center;
+}
+
+.seat-map__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.25rem;
+    justify-content: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.legend-item__dot {
+    width: 0.95rem;
+    height: 0.85rem;
+    border-radius: 6px 6px 2px 2px;
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+.legend-item__dot--available {
+    background: var(--avail-bg);
+    border: 1.5px solid var(--avail-border);
+}
+
+.legend-item__dot--selected {
+    background: var(--sel-bg);
+    border: 1.5px solid var(--sel-border);
+}
+
+.legend-item__dot--sold {
+    background: var(--sold-bg);
+    border: 1.5px solid var(--sold-border);
+}
+
+.seat-map__stage {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: clamp(0.45rem, 1.5vw, 0.85rem);
+    row-gap: var(--row-gap);
+    align-items: center;
+    width: 100%;
+}
+
+.seat-map__corner {
+    min-width: 2rem;
+    height: 100%;
+}
+
+.seat-map__screen {
+    text-align: center;
+    padding: 7px 12px;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
+    border-top: 4px solid #94a3b8;
+    border-radius: 50% 50% 0 0 / 14px 14px 0 0;
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    font-weight: 700;
+    user-select: none;
+    margin-bottom: 1em;
+}
+
+.seat-map__row-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: var(--seat-size);
+    font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+    font-weight: 700;
+    color: var(--muted);
+    user-select: none;
+}
+
+.seat-map__row-seats {
+
+    background-color: whitesmoke;
+    border-radius: 1em;
+    display: grid;
+    grid-template-columns: var(--seat-grid-template, repeat(8, minmax(0, 1fr)));
+    gap: var(--col-gap);
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+}
+
+.seat {
+    width: 100%;
+    min-width: 0;
+    height: var(--seat-size);
+    padding: 0 2px;
+    font-size: clamp(0.65rem, 1.7vw, 0.78rem);
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 8px 8px 3px 3px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+}
+
+.seat:focus-visible {
+    outline: 2px solid var(--avail-shadow);
+    outline-offset: 2px;
+}
+
+.seat--available {
+    background: var(--avail-bg);
+    border-color: var(--avail-border);
+    color: var(--avail-ink);
+    box-shadow: inset 0 -3px 0 var(--avail-shadow);
+}
+
+.seat--available:hover:not(:disabled) {
+    background: var(--avail-hover-bg);
+    border-color: var(--avail-shadow);
+}
+
+.seat--selected {
+    background: var(--sel-bg);
+    border-color: var(--sel-border);
+    color: var(--sel-ink);
+    box-shadow: inset 0 -3px 0 var(--sel-shadow);
+}
+
+.seat--selected:hover:not(:disabled) {
+    background: var(--sel-hover-bg);
+    border-color: var(--sel-shadow);
+}
+
+.seat--sold {
+    background: var(--sold-bg);
+    border-color: var(--sold-border);
+    color: var(--sold-ink);
+    cursor: not-allowed;
+}
+
+.seat:disabled:not(.seat--sold) {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.seat-map__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.seat-map__summary {
+    margin: 0;
+    font-size: 0.88rem;
+    min-width: 0;
+}
+
+.seat-map__hint {
+    color: var(--muted);
+}
+
+.seat-map__sold-out {
+    color: var(--sold-bg);
+    font-weight: 700;
+}
+
+.seat-map__confirm-btn {
+    padding: 0.65rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--sel-ink);
+    background: var(--sel-bg);
+    border: 1.5px solid var(--sel-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.14s ease, border-color 0.14s ease, opacity 0.14s ease;
+}
+
+.seat-map__confirm-btn:hover:not(:disabled) {
+    background: var(--sel-hover-bg);
+    border-color: var(--sel-shadow);
+}
+
+.seat-map__confirm-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.seat-map__cancel-btn {
+    padding: 0.65rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--cancel-ink, #4b5563);
+    background: var(--cancel-bg, transparent);
+    border: 1.5px solid var(--cancel-border, #d1d5db);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.14s ease, border-color 0.14s ease, opacity 0.14s ease;
+}
+
+.seat-map__cancel-btn:hover:not(:disabled) {
+    background: var(--cancel-hover-bg, #f3f4f6);
+    border-color: var(--cancel-hover-border, #9ca3af);
+}
+
+.seat-map__cancel-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
