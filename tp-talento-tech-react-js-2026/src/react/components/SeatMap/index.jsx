@@ -3,7 +3,7 @@ import { Showing, SeatSelection } from '../../../js/domain/showings';
 import { formatRowLabel } from './utils';
 import './seatmap.css';
 
-export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurchase }) {
+export function SeatMap({ showing, previousSelectedSeats=[], maxSeatsPerPurchase = Infinity, onConfirmPurchase }) {
     const showingEntity = useMemo(
         () => (showing instanceof Showing ? showing : new Showing(showing)),
         [showing]
@@ -12,7 +12,8 @@ export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurc
     const { auditorium } = showingEntity;
     const { selection, toggleSeat, clearSelection } = useSeatSelection(
         showingEntity,
-        maxSeatsPerPurchase
+        maxSeatsPerPurchase,
+        previousSelectedSeats
     );
 
     const gridTemplate = useMemo(
@@ -187,9 +188,9 @@ function SeatFooter({ selection, availableCount, isSoldOut, onConfirm, onClearSe
     );
 }
 
-function useSeatSelection(showingEntity, maxSeatsPerPurchase) {
+function useSeatSelection(showingEntity, maxSeatsPerPurchase, previousSelectedSeats = []) {
     const [rawSelection, setRawSelection] = useState(
-        () => new SeatSelection(showingEntity, maxSeatsPerPurchase)
+        () => new SeatSelection(showingEntity, maxSeatsPerPurchase, previousSelectedSeats)
     );
 
     const selection = rawSelection.syncWithShowing(showingEntity, maxSeatsPerPurchase);

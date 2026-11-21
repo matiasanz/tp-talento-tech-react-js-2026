@@ -37,6 +37,7 @@ export default () => {
 
     const findShowing = showingId => showings.find(({id})=>showingId === id)
     const onConfirmPurchase = seats=>onClickAddTicketToCart(cart, movie, findShowing(selectedShowingId), seats, navigate)
+    const previousSelectedSeats = showingId => cart.getItem(showingId)?.detail.seats ?? []
 
     return (
         <>
@@ -61,7 +62,7 @@ export default () => {
                         })
                     }
 
-                    {selectedShowingId && <SeatMap showing={findShowing(selectedShowingId)} onConfirmPurchase={onConfirmPurchase}></SeatMap>}
+                    {selectedShowingId && <SeatMap showing={findShowing(selectedShowingId)} previousSelectedSeats={previousSelectedSeats(selectedShowingId)} onConfirmPurchase={onConfirmPurchase}></SeatMap>}
                 </form>
             </Loading>
         </>

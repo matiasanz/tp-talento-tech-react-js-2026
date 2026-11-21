@@ -10,13 +10,16 @@ export class Cart {
         this.onChangeItems(newItems)
     }
 
-    addItem(newItem) {
-        const existingItem = this.items.find(item => item.id === newItem.id);
+    getItem(itemId){
+        return this.items.find(item => item.id === itemId)
+    }
 
-        if (existingItem) {
-            existingItem.quantity += newItem.quantity;
+    addItem(newItem) {
+        const existingIndex = this.items.findIndex(({id}) => id === newItem.id)
+        if (existingIndex!==-1) {
+            this.items[existingIndex] = newItem
         } else {
-            this.items = [...this.items, newItem]
+            this.items.push(newItem)
         }
     }
 
@@ -35,6 +38,7 @@ export class Item {
         this.detail = detail;
         this.quantity = quantity;
     }
+
 }
 
 export class ShowingItemDetail{
@@ -43,12 +47,10 @@ export class ShowingItemDetail{
         this.showing = showing
         this.seats = seats
     }   
-
-
 }
 
 export function buildShowingItem(movie, showing, seats){
-    return new Item(
+    return new Item( 
         showing.id,
         new ShowingItemDetail(movie, showing, seats),
          seats.length
