@@ -32,27 +32,17 @@ export class Cart {
     }
 }
 
-export class Item {
-    constructor(id, detail, quantity) {
-        this.id = id;
-        this.detail = detail;
-        this.quantity = quantity;
+class Item {
+    constructor(id) {
+        this.id = id
     }
-
 }
 
-export class ShowingItemDetail{
+export class ShowingItem extends Item{
     constructor(movie, showing, seats){
+        super(showing.id)
         this.movie = movie
         this.showing = showing
         this.seats = seats
-    }   
-}
-
-export function buildShowingItem(movie, showing, seats){
-    return new Item( 
-        showing.id,
-        new ShowingItemDetail(movie, showing, seats),
-         seats.length
-    )
+    }
 }

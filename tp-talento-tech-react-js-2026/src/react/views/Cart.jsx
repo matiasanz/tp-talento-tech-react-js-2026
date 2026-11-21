@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import paths from "../router/paths"
 import {useCart} from "../context/cart"
-import { ShowingItemDetail } from "../../js/domain/cart"
+import { ShowingItem } from "../../js/domain/cart"
 import { formatRowLabel } from "../components/SeatMap/utils"
 import { formatDateTime } from "../../js/domain/formatters"
 
@@ -22,16 +22,14 @@ export default () =>  {
 }
 
 const Item = (item, cart) => {
-
-    const {id, detail, quantity} = item
+    const {id} = item
     return (
         <li key={id}>
             <h2>Item #{id}</h2>
             <ul>
                 {
-                    detail instanceof ShowingItemDetail && (<ShowingItem {...detail}/>)
+                    item instanceof ShowingItem && (<ShowingItemDetail {...item}/>)
                 }
-                <li>Total: {quantity}</li>
             </ul>
 
             <button onClick={()=>onClickDeleteItem(id, cart)}>
@@ -42,12 +40,12 @@ const Item = (item, cart) => {
     )
 }
 
-const ShowingItem = ({movie, showing, seats}) => (<>
+const ShowingItemDetail = ({movie, showing, seats}) => (<>
     <li>
         <Link to={paths.PRODUCT(movie.id)}>{movie.title}</Link>    
     </li>
     <li>{formatDateTime(showing.dateTime)} Sala {showing.auditorium.name}</li>
-    <li>Butacas {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}</li>
+    <li>{seats.length} butacas: {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}</li>
 </>)
 
 function onClickDeleteItem(itemId, cart){
