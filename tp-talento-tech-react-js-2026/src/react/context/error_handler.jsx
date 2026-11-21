@@ -31,6 +31,7 @@ const errorHandler = setError => (err) => {
 }
 
 function getStatus(error) {
+    console.error(error)
     switch(error.name){
         case NotFoundError.name:
             return 404
