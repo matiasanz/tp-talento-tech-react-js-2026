@@ -15,18 +15,20 @@ export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurc
     );
 
     const gridTemplate = useMemo(
-        () => auditorium.rowsLayout.map((n) => `repeat(${n}, minmax(0, 1fr))`).join(' var(--aisle-width, 1rem) '),
+        () => auditorium.rowsLayout.map((n) => `repeat(${n}, 1fr)`).join(' var(--aisle-width, 1rem) '),
         [auditorium.rowsLayout]
     );
 
     const handleConfirm = () => {
-        onConfirmPurchase?.(showingEntity.id, selection.selectedSeats, clearSelection);
+        onConfirmPurchase?.(showingEntity.id, selection.selectedSeats);
     };
 
     return (
         <section className="seat-map" aria-labelledby="seat-map-title">
-            <h3 id="seat-map-title">Sala {auditorium.name}</h3>
-            <SeatLegend />
+            <header className="seat-map__header">
+                <h3 id="seat-map-title">Sala {auditorium.name}</h3>
+                <SeatLegend />
+            </header>
 
             <div className="seat-map__stage" role="grid" aria-label="Mapa de butacas">
                 <div aria-hidden="true" className="seat-map__corner" />
@@ -53,6 +55,7 @@ export function SeatMap({ showing, maxSeatsPerPurchase = Infinity, onConfirmPurc
                 availableCount={showingEntity.availableSeatsCount}
                 isSoldOut={showingEntity.isSoldOut}
                 onConfirm={handleConfirm}
+                onClearSelection={clearSelection}
             />
         </section>
     );
@@ -145,7 +148,7 @@ function SeatLegend() {
     );
 }
 
-function SeatFooter({ selection, seatsPerRow, availableCount, isSoldOut, onConfirm }) {
+function SeatFooter({ selection, seatsPerRow, availableCount, isSoldOut, onConfirm, onClearSelection }) {
     return (
         <div className="seat-map__footer">
             <p className="seat-map__summary">
@@ -175,6 +178,14 @@ function SeatFooter({ selection, seatsPerRow, availableCount, isSoldOut, onConfi
                 className="seat-map__confirm-btn"
             >
                 Confirmar Compra ({selection.count})
+            </button>
+            <button
+                type="button"
+                disabled={selection.isEmpty}
+                onClick={onClearSelection}
+                className="seat-map__cancel-btn"
+            >
+                Limpiar mi selección
             </button>
         </div>
     );
