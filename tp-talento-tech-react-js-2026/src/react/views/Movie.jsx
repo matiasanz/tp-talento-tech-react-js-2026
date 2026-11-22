@@ -18,54 +18,62 @@ import { formatDateTime } from "../../js/domain/formatters"
 
 export default () => {
     const {handleError} = useErrorHandler()
-
+    
     const {productId} = useParams()
     const [movie, setMovie] = useState(null)
-    const navigate = useNavigate()
-    const cart = useCart()
+
     const [showings, setShowings] = useState([]) 
-    const [selectedShowingId, setSelectedShowingId] = useState(null)
+
 
     useEffect(()=>{
         moviesRepo.findById(productId)
             .then(setMovie)
-            .catch(handleError)
+            .catch(handleError)    
 
         showingsRepo.findByMovieId(productId)
             .then(setShowings)
             .catch(handleError)
-    
+
     }, [productId])
+
+    return (
+        <>
+            <Loading isLoaded={movie} >
+                <MovieEntry {...movie}/>
+                <BuyTicketsForm movie={movie} showings={showings}/>
+            </Loading>
+        </>
+    )
+}
+
+function BuyTicketsForm({movie, showings}){
+    const [selectedShowingId, setSelectedShowingId] = useState(null)
+    const navigate = useNavigate()
+    const cart = useCart()
 
     const findShowing = showingId => showings.find(({id})=>showingId === id)
     const onConfirmPurchase = seats=>onClickAddTicketToCart(cart, movie, findShowing(selectedShowingId), seats, navigate)
     const previousSelectedSeats = showingId => cart.getItem(showingId)?.seats ?? []
 
     return (
-        <>
-            <Loading isLoaded={movie}>
-                <MovieEntry {...movie}/>
-            </Loading>
+        <form>
+            {
+                showings.map( ({id, dateTime}, index) =>{                            
+                    return <div key={`showing-${id}`}>
+                        {index!=0 && (<br/>)}
 
-            <form>
-                {
-                    showings.map( ({id, dateTime}, index) =>{                            
-                        return <div key={`showing-${id}`}>
-                            {index!=0 && (<br/>)}
+                        <input type="radio"
+                            id={`showing-${id}-input`} name="showingSelection"
+                            value={id} 
+                            onChange={ onChangeSelectedShowing(setSelectedShowingId) } 
+                        />
+                        <label htmlFor={`showing-${id}-input`}>{formatDateTime(dateTime)}</label>
+                    </div>
+                })
+            }
 
-                            <input type="radio"
-                                id={`showing-${id}-input`} name="showingSelection"
-                                value={id} 
-                                onChange={ onChangeSelectedShowing(setSelectedShowingId) } 
-                            />
-                            <label htmlFor={`showing-${id}-input`}>{formatDateTime(dateTime)}</label>
-                        </div>
-                    })
-                }
-
-                {selectedShowingId && <SeatMap showing={findShowing(selectedShowingId)} previousSelectedSeats={previousSelectedSeats(selectedShowingId)} onConfirmPurchase={onConfirmPurchase}></SeatMap>}
-            </form>
-        </>
+            {selectedShowingId && <SeatMap showing={findShowing(selectedShowingId)} previousSelectedSeats={previousSelectedSeats(selectedShowingId)} onConfirmPurchase={onConfirmPurchase}></SeatMap>}
+        </form>
     )
 }
 
