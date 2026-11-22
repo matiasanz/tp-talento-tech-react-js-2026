@@ -9,7 +9,7 @@ export default () =>  {
     const cart = useCart()
     return cart.items.length > 0? (<>
         <ul>
-            { cart.items.map(i => Item(i, cart)) }
+            { cart.items.map((item, index) => Item(item, cart, index)) }
         </ul>
 
         <p><i>Los asientos se confirman al ingresar al establecimiento.</i></p>
@@ -21,11 +21,11 @@ export default () =>  {
     </>): (<p>Aún no has marcado ningún item. ¿Qué esperas?</p>)
 }
 
-const Item = (item, cart) => {
+const Item = (item, cart, index) => {
     const {id} = item
     return (
         <li key={id}>
-            <h2>Item #{id}</h2>
+            <h2>Item #{index+1}</h2>
             <ul>
                 {
                     item instanceof ShowingItem && (<ShowingItemDetail {...item}/>)
