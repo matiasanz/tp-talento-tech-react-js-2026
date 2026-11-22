@@ -45,7 +45,7 @@ const ShowingItemDetail = ({movie, showing, seats}) => (<>
         <Link to={paths.PRODUCT(movie.id)}>{movie.title}</Link>    
     </li>
     <li>{formatDateTime(showing.dateTime)} Sala {showing.auditorium.name}</li>
-    <li>{seats.length} butacas: {seats.map(s=>formatSeatLabel(showing, s)).join(", ")}</li>
+    <li>{seats.length} butaca{seats.length>1?"s":""}: {formatSeats(showing, seats)}</li>
 </>)
 
 function onClickDeleteItem(itemId, cart){
@@ -54,6 +54,17 @@ function onClickDeleteItem(itemId, cart){
 
 function onClickClearCart(cart){
     cart.clear()
+}
+
+function formatSeats(showing, seats){
+    const s = seats.map(s=>formatSeatLabel(showing, s))
+    let suffix = ""
+    if(s.length>1){
+        const lastSeat = s.pop()
+        suffix = " & "+lastSeat
+    }
+
+    return s.join(", ")+suffix
 }
 
 function formatSeatLabel(showing, seat) {

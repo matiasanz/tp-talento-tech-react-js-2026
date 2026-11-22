@@ -47,26 +47,24 @@ export default () => {
                 <MovieEntry {...movie}/>
             </Loading>
 
-            <Loading isLoaded={showings.length}>
-                <form>
-                    {
-                        showings.map( ({id, dateTime}, index) =>{                            
-                            return <div key={`showing-${id}`}>
-                                {index!=0 && (<br/>)}
+            <form>
+                {
+                    showings.map( ({id, dateTime}, index) =>{                            
+                        return <div key={`showing-${id}`}>
+                            {index!=0 && (<br/>)}
 
-                                <input type="radio"
-                                    id={`showing-${id}-input`} name="showingSelection"
-                                    value={id} 
-                                    onChange={ onChangeSelectedShowing(setSelectedShowingId) } 
-                                />
-                                <label htmlFor={`showing-${id}-input`}>{formatDateTime(dateTime)}</label>
-                            </div>
-                        })
-                    }
+                            <input type="radio"
+                                id={`showing-${id}-input`} name="showingSelection"
+                                value={id} 
+                                onChange={ onChangeSelectedShowing(setSelectedShowingId) } 
+                            />
+                            <label htmlFor={`showing-${id}-input`}>{formatDateTime(dateTime)}</label>
+                        </div>
+                    })
+                }
 
-                    {selectedShowingId && <SeatMap showing={findShowing(selectedShowingId)} previousSelectedSeats={previousSelectedSeats(selectedShowingId)} onConfirmPurchase={onConfirmPurchase}></SeatMap>}
-                </form>
-            </Loading>
+                {selectedShowingId && <SeatMap showing={findShowing(selectedShowingId)} previousSelectedSeats={previousSelectedSeats(selectedShowingId)} onConfirmPurchase={onConfirmPurchase}></SeatMap>}
+            </form>
         </>
     )
 }

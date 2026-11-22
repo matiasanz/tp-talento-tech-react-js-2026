@@ -8,8 +8,9 @@ export class MovieEntry {
 }
 
 export class Movie extends MovieEntry{
-    constructor(id, title, durationMinutes, poster){
+    constructor(id, title, durationMinutes, poster, searchValue){
         super(id, title, durationMinutes, poster)
+        this.searchValue = searchValue
     }
 }
 

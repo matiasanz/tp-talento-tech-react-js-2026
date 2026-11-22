@@ -1,4 +1,5 @@
 import { WriteClient } from "./client/write_client";
+import { normalizeValueForSearch } from "../utils/search";
 
 function parseDuration(durationHHMM){
     var timeParts = durationHHMM.split(":");
@@ -12,6 +13,7 @@ const mapMovie = m => {
 
     return {
         ...m,
+        searchValue: buildSearchValue([m.title]), 
         durationMinutes: parseDuration(m.durationMinutes)
     }
 }
@@ -35,3 +37,9 @@ class WriteRepository{
 }
 
 export default new WriteRepository()
+
+// utils
+
+function buildSearchValue(fields){
+    return fields.map(normalizeValueForSearch).join("|")
+}
