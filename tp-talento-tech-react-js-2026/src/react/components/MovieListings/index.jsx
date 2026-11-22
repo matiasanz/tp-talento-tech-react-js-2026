@@ -4,6 +4,7 @@ import paths from "../../router/paths"
 import moviesRepo from "../../../js/repositories/movies_read_repo"
 import { useErrorHandler } from "../../context/error_handler"
 import Loading from "../Loading"
+import { formatDuration } from "../../../js/domain/formatters"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
@@ -51,16 +52,6 @@ export const MovieEntry = ({title, poster, durationMinutes}) =>
     <h3>{title}</h3>
     <img src={poster}></img>
     <ul>
-        <li>duración: {durationToString(durationMinutes)}</li>
+        <li>duración: {formatDuration(durationMinutes)}</li>
     </ul>
 </> 
-    
-
-//utils
-
-function durationToString(durationMinutes){
-    const hours = Math.floor(durationMinutes/60).toString()
-    const minutes = (durationMinutes%60).toString().padStart(2, '0')
-
-    return `${hours} ${hours==1? 'h': 'hs'} ${minutes} m`
-}

@@ -8,3 +8,10 @@ export function formatDateTime(dateTime) {
 
     return `${day}/${month} ${hours}:${minutes} hs`;
 }
+
+export function formatDuration(durationMinutes){
+    const hours = Math.floor(durationMinutes/60).toString()
+    const minutes = (durationMinutes%60).toString().padStart(2, '0')
+
+    return `${hours} ${hours==1? 'h': 'hs'} ${minutes} m`
+}
