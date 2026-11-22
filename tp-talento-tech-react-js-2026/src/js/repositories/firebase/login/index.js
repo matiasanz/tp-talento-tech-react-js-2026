@@ -35,9 +35,6 @@ export async function logout() {
 }
 
 function handleError(error){
-    console.error(error)    
-
-
     if(error.name === FirebaseError.name && error.code.startsWith("auth/")){
         const code = error.code.slice(5)
         switch(code){
