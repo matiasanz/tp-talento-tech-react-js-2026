@@ -10,13 +10,16 @@ export class Cart {
         this.onChangeItems(newItems)
     }
 
-    addItem(newItem) {
-        const existingItem = this.items.find(item => item.id === newItem.id);
+    getItem(itemId){
+        return this.items.find(item => item.id === itemId)
+    }
 
-        if (existingItem) {
-            existingItem.quantity += newItem.quantity;
+    addItem(newItem) {
+        const existingIndex = this.items.findIndex(({id}) => id === newItem.id)
+        if (existingIndex!==-1) {
+            this.items[existingIndex] = newItem
         } else {
-            this.items = [...this.items, newItem]
+            this.items.push(newItem)
         }
     }
 
@@ -29,10 +32,17 @@ export class Cart {
     }
 }
 
-export class Item {
-    constructor(id, detail, quantity) {
-        this.id = id;
-        this.detail = detail;
-        this.quantity = quantity;
+class Item {
+    constructor(id) {
+        this.id = id
+    }
+}
+
+export class ShowingItem extends Item{
+    constructor(movie, showing, seats){
+        super(showing.id)
+        this.movie = movie
+        this.showing = showing
+        this.seats = seats
     }
 }

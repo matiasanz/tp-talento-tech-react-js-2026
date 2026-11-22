@@ -7,9 +7,9 @@ class StaticJsonRepo {
         .then(res => res.json())
         .then(json => json.data)
 
-    findMany = async(filter) => {
+    findMany = async(filter, mapper) => {
         return this.findAll()
-            .then(res => res.filter(filter))
+            .then(res => res.filter(filter).map(mapper))
     }
 
     findOne = async(filter) => {
