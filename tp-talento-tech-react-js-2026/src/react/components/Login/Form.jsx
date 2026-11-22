@@ -1,8 +1,25 @@
 import { useState } from 'react';
-import { login, ErrInvalidCredentials } from '../../../js/repositories/firebase/login';
+import { login, signup, ErrInvalidCredentials, ErrWeakPassword, ErrInvalidEmail, ErrEmailAlreadyInUse } from '../../../js/repositories/firebase/login';
 import { useErrorHandler } from '../../context/error_handler';
 
-export default () => {
+export default () =>
+<>
+    <UserForm title={"Iniciar sesión"} onSubmit={login} expectedErrors={
+        new Map([
+            [ErrInvalidCredentials, "El usuario y/o la contraseña son incorrectos"]
+        ])
+    }/>
+    <UserForm title={"Registrarse"} onSubmit={signup} expectedErrors={
+        new Map([
+            [ErrWeakPassword, "La contraseña es muy débil, debe tener al menos 6 caracteres."],
+            [ErrInvalidEmail, "Por favor, ingrese un email válido."],
+            [ErrEmailAlreadyInUse, "Ya existe un usuario creado para el email ingresado. desea iniciar sesión con ese usuario?"]
+        ])
+    }/>
+</>
+
+
+function UserForm({title, onSubmit, expectedErrors}){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("")
@@ -10,8 +27,8 @@ export default () => {
 
     return (
     <>
-        <h2>Iniciar Sesión</h2>
-        <form onSubmit={handleLogin({email, password}, login, setMessage, handleError)}>
+        <h2>{title}</h2>
+        <form onSubmit={handleUserForm({email, password}, onSubmit, setMessage, expectedErrors, handleError)}>
             <input type="email" required autoComplete='on'
                 placeholder="Correo electrónico"
                 value={email}
@@ -31,15 +48,17 @@ export default () => {
     );
 }
 
-const handleLogin = ({email, password}, login, setMessage, handleError) => (event) => {
+const handleUserForm = ({email, password}, onSubmit, setMessage, expectedErrors, handleError) => (event) => {
 	event.preventDefault();
 
-	login(email, password)
+	onSubmit(email, password)
 		.catch((error) => {
-			if(error instanceof ErrInvalidCredentials){
-				setMessage("El usuario y/o la contraseña son incorrectos")
-				return
-			}
+            for(const [errType, message] of expectedErrors){
+                if(error instanceof errType){
+                    setMessage(message)
+                    return
+                }
+            }
 
 			handleError(error)
 		})
