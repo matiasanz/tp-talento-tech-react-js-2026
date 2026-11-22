@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { MovieEntry } from '../components/MovieListings'
+import { MovieEntry } from '../components/features/MovieListings'
 
 import paths from "../router/paths"
 import { useErrorHandler } from "../context/error_handler"
@@ -8,7 +8,7 @@ import { useErrorHandler } from "../context/error_handler"
 import { useCart } from "../context/cart"
 import { ShowingItem } from "../../js/domain/cart"
 
-import { SeatMap } from "../components/SeatMap"
+import { SeatMap } from "../components/features/SeatMap"
 import Loading from "../components/Loading"
 
 import moviesRepo from "../../js/repositories/movies_read_repo"

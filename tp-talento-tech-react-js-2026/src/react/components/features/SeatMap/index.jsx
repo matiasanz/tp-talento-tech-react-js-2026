@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, memo } from 'react';
-import { Showing, SeatSelection } from '../../../js/domain/showings';
+import { Showing, SeatSelection } from '../../../../js/domain/showings';
 import { formatRowLabel } from './utils';
 import './seatmap.css';
 
