@@ -5,13 +5,14 @@ import moviesRepo from "../../../../js/repositories/movies_read_repo"
 import { useErrorHandler } from "../../../context/error_handler"
 import Loading from "../../Loading"
 import { formatDuration } from "../../../../js/domain/formatters"
+import Pagination from "../../Pagination"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
     const {handleError} = useErrorHandler()
     const [searchValue, setSearchValue] = useState("")
 
-    useEffect(()=>{
+    const onChangePageNumber = searchValue => async(pageNumber) => {
         if(searchValue === ""){
             moviesRepo.findAll()
                 .then(setMovies)
@@ -22,9 +23,12 @@ export default () =>  {
         moviesRepo.findByText(searchValue)
             .then(setMovies)
             .catch(handleError)
+    }
 
+    useEffect(()=>{
+        onChangePageNumber(searchValue)(1)
     }, [searchValue])
-    
+
     return (<>
         <Loading isLoaded={movies.length || searchValue !== ""}>
             <form>
@@ -35,13 +39,21 @@ export default () =>  {
                 />
             </form>
             <ul>
-                {movies.length? movies.map(m => 
-                    <Link to={paths.PRODUCT(m.id)} key={m.id}>
-                        <li>
-                            {MovieEntry(m)}
-                        </li>
-                    </Link>        
-                ): <p>Ninguna película coincide con su búsqueda.</p>}
+                <Pagination
+                    alt={"Ninguna película coincide con su búsqueda."}   
+                    elements={movies} lastPageNumber={4}
+                    onChangePageNumber={onChangePageNumber(searchValue)} 
+                >
+                    {
+                        m => (
+                            <Link to={paths.PRODUCT(m.id)}>
+                                <li>
+                                    {MovieEntry(m)}
+                                </li>
+                            </Link>
+                        )
+                    }        
+                </Pagination>
             </ul>
         </Loading>
     </>)
