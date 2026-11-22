@@ -8,24 +8,39 @@ import Loading from "../Loading"
 export default () =>  { 
     const [movies, setMovies] = useState([])
     const {handleError} = useErrorHandler()
+    const [searchValue, setSearchValue] = useState("")
 
     useEffect(()=>{
-        moviesRepo.findAll()
+        if(searchValue === ""){
+            moviesRepo.findAll()
+                .then(setMovies)
+                .catch(handleError)
+            return
+        }
+
+        moviesRepo.findByText(searchValue)
             .then(setMovies)
             .catch(handleError)
-    }, [])
+
+    }, [searchValue])
     
     return (<>
-        <Loading isLoaded={movies.length}>
+        <Loading isLoaded={movies.length || searchValue !== ""}>
+            <form>
+                <input type="search"
+                    placeholder="Búsqueda..."
+                    value={searchValue}
+                    onChange={({target: {value}})=>setSearchValue(value)}
+                />
+            </form>
             <ul>
-                {movies.map(m => 
+                {movies.length? movies.map(m => 
                     <Link to={paths.PRODUCT(m.id)} key={m.id}>
                         <li>
                             {MovieEntry(m)}
                         </li>
-                    </Link>
-                    
-                )}
+                    </Link>        
+                ): <p>Ninguna película coincide con su búsqueda.</p>}
             </ul>
         </Loading>
     </>)
