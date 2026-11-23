@@ -1,6 +1,7 @@
 import { db } from './config'
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query } from 'firebase/firestore';
 import { handleReadError } from './errors';
+import { Pagination } from './pagination';
 
 const identity = x => x
 
@@ -32,11 +33,16 @@ export class ReadClient {
         }
     }
 
-    async findAll(mapper = identity) {
+    async findAll({mapper = identity, pagination = null}) {
         try {
             const colRef = collection(db, this.collectionName);
-            const snap = await getDocs(colRef);
-            
+
+            const snap = await (
+                pagination?
+                  getDocs(query(colRef, ...new Pagination(pagination).buildOptions()))
+                : getDocs(colRef)
+            )
+
             return fromDocuments(snap, mapper);
         } catch (error) {
             handleReadError(error);
@@ -45,7 +51,7 @@ export class ReadClient {
 
     async findByQuery(firestoreQuery, mapper=identity) {
         try {
-            const snap = await this.getDocs(firestoreQuery);
+            const snap = await getDocs(firestoreQuery);
             return fromDocuments(snap, mapper)
         } catch (error) {
             handleReadError(error);
