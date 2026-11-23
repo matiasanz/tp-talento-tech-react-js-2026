@@ -36,16 +36,19 @@ export default () =>  {
             { cart.items.map((item, index) => Item({canEdit: true, item, cart, index})) }
         </ul>
 
-        <p><i>Los asientos se confirman al ingresar al establecimiento.</i></p>
-
         <div>
             <button onClick={onClickConfirmPurchase}>Confirmar Compra</button>
             <p>{message}</p>
         </div>
-        <button onClick={()=>onClickClearCart(cart)}>
-            <img src="/assets/icons/delete.svg"/>
-            Vaciar carrito
-        </button>
+
+        {
+            sessionUser? (
+                <button onClick={()=>onClickClearCart(cart)}>
+                    <img src="/assets/icons/delete.svg"/>
+                    Vaciar carrito
+                </button>
+            ): (<p>Aún no haz iniciado sesión, hazlo para poder confirmar la compra.</p>)
+        }
     </>): (<p>Aún no has marcado ningún item. ¿Qué esperas?</p>)
 }
 
