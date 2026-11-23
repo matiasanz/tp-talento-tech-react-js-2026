@@ -1,6 +1,6 @@
 export class User{
-    constructor({id, email}){
-        this.id = id
+    constructor({uid, email}){
+        this.id = uid
         this.email = email
     }
 }
