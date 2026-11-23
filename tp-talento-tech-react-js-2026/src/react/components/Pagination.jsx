@@ -1,27 +1,35 @@
-import { useEffect } from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { withPreventDefault } from "./utils"
 
-export default ({onChangePageNumber, lastPageNumber, elements, alt, children}) => {
-    const [pageNumber, setPageNumber] = useState(1)
- 
-    useEffect(()=>{
-        onChangePageNumber(pageNumber)
-    }, [pageNumber])
+export default ({onFetchNext, canFetchNext, elements, alt, children}) => {
+    const [lastElement, setLastElement] = useState(null)
+    const [enabledButton, setEnabledButton] = useState(canFetchNext) 
 
-    const previousPage = withPreventDefault(()=>setPageNumber(Math.max(pageNumber-1, 1)))
-    const nextPage = withPreventDefault(()=>setPageNumber(Math.min(pageNumber+1, lastPageNumber)))
+    useEffect(()=>{
+        const elementsSize = elements.length
+        if(elementsSize>0){
+            setLastElement(elements[elementsSize-1])
+            setEnabledButton(canFetchNext)
+        }
+    }, [elements.length])
+
+    const onClickShowMore = withPreventDefault(()=>{        
+        onFetchNext(lastElement)
+            .then(setEnabledButton(enabledButton))
+    })
 
     return elements.length? (
         <>
             <div>
                 { elements.map((e, index) => (<div key={e.id ?? index}>{children(e)}</div>)) }
             </div>
-            <div>
-                { pageNumber > 1 && <button onClick={previousPage}>Anterior</button> }
-                {pageNumber}
-                { pageNumber < lastPageNumber && <button onClick={nextPage}>Siguiente</button> }
-            </div>
+            {
+                canFetchNext && (
+                    <div>
+                        <button onClick={onClickShowMore}>Mostrar más</button>
+                    </div>
+                )
+            }
         </>
     ): {alt}
 }
