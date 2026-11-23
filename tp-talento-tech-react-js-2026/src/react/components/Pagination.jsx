@@ -15,7 +15,6 @@ export default ({onFetchNext, canFetchNext, elements, alt, children}) => {
 
     const onClickShowMore = withPreventDefault(()=>{        
         onFetchNext(lastElement)
-            .then(setEnabledButton(enabledButton))
     })
 
     return elements.length? (
