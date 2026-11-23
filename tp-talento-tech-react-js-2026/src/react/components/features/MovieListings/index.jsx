@@ -6,27 +6,64 @@ import { useErrorHandler } from "../../../context/error_handler"
 import Loading from "../../Loading"
 import { formatDuration } from "../../../../js/domain/formatters"
 import Pagination from "../../Pagination"
+import { orderBy } from "firebase/firestore"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
     const {handleError} = useErrorHandler()
     const [searchValue, setSearchValue] = useState("")
+    const [canFetchNext, setCanFetchNext] = useState(true)
+    let searching = false
+    
+    const limitPerPage = 1
 
-    const onChangePageNumber = searchValue => async(pageNumber) => {
-        if(searchValue === ""){
-            moviesRepo.findAll()
-                .then(setMovies)
-                .catch(handleError)
-            return
-        }
-
-        moviesRepo.findByText(searchValue)
+    const onFetchNext = searchValue => async(lastElement) => {
+        if (searchValue!== ""){
+            moviesRepo.findByText(searchValue)
+            .then(m=>{
+                if(!searching){
+                    searching = true
+                }
+                
+                return m
+            })
             .then(setMovies)
             .catch(handleError)
+
+            return
+        }
+        
+        const pagination = {
+            limit: limitPerPage+1,
+            orderBy: "releaseDate"
+        }
+
+        if(lastElement!==null){
+            pagination.startAfter = lastElement.releaseDate
+        }
+
+        moviesRepo.findAll(pagination)
+        .then(m => {
+            const moreMovies = m.length>limitPerPage
+            setCanFetchNext(moreMovies)
+            if(moreMovies){
+                m.pop()
+            }
+
+            if(!searching){
+                m = [...movies, ...m]
+
+            } else {
+                searching = false
+            }
+
+            setMovies(m)
+        })
+        .catch(handleError)
     }
 
     useEffect(()=>{
-        onChangePageNumber(searchValue)(1)
+        onFetchNext(searchValue)(null)
     }, [searchValue])
 
     return (<>
@@ -41,8 +78,9 @@ export default () =>  {
             <ul>
                 <Pagination
                     alt={"Ninguna película coincide con su búsqueda."}   
-                    elements={movies} lastPageNumber={4}
-                    onChangePageNumber={onChangePageNumber(searchValue)} 
+                    elements={movies} 
+                    onFetchNext={onFetchNext(searchValue)} 
+                    canFetchNext={canFetchNext}
                 >
                     {
                         m => (

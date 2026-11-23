@@ -2,17 +2,17 @@ import { ReadClient } from "./client/read_client";
 import { Movie, MovieEntry } from "../../domain/movie";
 import { normalizeValueForSearch } from "../utils/search";
 
-const mapMovieEntry = m => new MovieEntry(m.id, m.title, m.durationMinutes, m.poster)
+const mapMovieEntry = m => new MovieEntry(m.id, m.title, m.durationMinutes, m.poster, m.releaseDate)
 
-const mapMovie = m => new Movie(m.id, m.title, m.durationMinutes, m.poster, m.searchValue)
+const mapMovie = m => new Movie(m.id, m.title, m.durationMinutes, m.poster, m.releaseDate, m.searchValue)
 
 class ReadRepository{
     constructor(){
         this.client = new ReadClient('movies')
     }
 
-    async findAll(mapper = mapMovieEntry){
-       return this.client.findAll(mapper)
+    async findAll(pagination = null, mapper = mapMovieEntry){
+       return this.client.findAll({mapper, pagination})
     }
 
     async findById(movieId){
@@ -20,7 +20,7 @@ class ReadRepository{
     }
 
     async findByText(text){
-        const movies = await this.findAll(mapMovie)
+        const movies = await this.findAll(null, mapMovie)
         const normalizedText = normalizeValueForSearch(text)
         const normalizedTextWords = (text.split(" ").map(normalizeValueForSearch))
 
