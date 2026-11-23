@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import paths from "../../../router/paths"
-import moviesRepo from "../../../../js/repositories/movies_read_repo"
+import moviesRepo, {OrderBy_ReleaseDate} from "../../../../js/repositories/movies_read_repo"
 import { useErrorHandler } from "../../../context/error_handler"
 import Loading from "../../Loading"
 import { formatDuration } from "../../../../js/domain/formatters"
 import Pagination from "../../Pagination"
-import { orderBy } from "firebase/firestore"
 
 export default () =>  { 
     const [movies, setMovies] = useState([])
@@ -35,7 +34,7 @@ export default () =>  {
         
         const pagination = {
             limit: limitPerPage+1,
-            orderBy: "releaseDate"
+            orderBy: OrderBy_ReleaseDate
         }
 
         if(lastElement!==null){

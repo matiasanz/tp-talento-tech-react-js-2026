@@ -30,4 +30,6 @@ class ReadRepository{
     }
 }
 
+export const OrderBy_ReleaseDate = "releaseDate"
+
 export default new ReadRepository()
