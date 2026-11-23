@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Jorge Luis Borges",
+      "rowsLayout": [6, 8, 6],
+      "rowsCount": 12
+    },
+    {
+      "id": 2,
+      "name": "Alfonsina Storni",
+      "rowsLayout": [6, 8, 6],
+      "rowsCount": 12
+    },
+    {
+      "id": 3,
+      "name": "Julio Cortázar",
+      "rowsLayout": [6, 8, 6],
+      "rowsCount": 12
+    },
+    {
+      "id": 4,
+      "name": "Alejandra Pizarnik",
+      "rowsLayout": [6, 8, 6],
+      "rowsCount": 12
+    }
+  ]
+}

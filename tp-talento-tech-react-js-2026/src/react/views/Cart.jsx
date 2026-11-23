@@ -6,11 +6,14 @@ import { withPreventDefault } from "../components/utils"
 import { onAuthStateChange, useSessionUser } from "../context/session"
 import { useEffect } from "react"
 import Item from "../components/features/Items"
+import paths from "../router/paths"
+import { useNavigate } from "react-router-dom"
 
 export default () =>  { 
     const cart = useCart()
     const [message, setMessage] = useState("")
-    
+    const navigate = useNavigate()
+
 
     useEffect(()=>{
         const unsubscribe = onAuthStateChange(()=>{
@@ -24,8 +27,8 @@ export default () =>  {
 
 
     const onClickConfirmPurchase = withPreventDefault(()=>{
-        onConfirmPurchase(setMessage)
-            (sessionUser, cart.items)
+        onConfirmPurchase(setMessage, navigate)
+            (sessionUser, cart)
     })
 
     return cart.items.length > 0? (<>
@@ -47,20 +50,22 @@ export default () =>  {
 }
 
 
-const onConfirmPurchase = (setMessage) => (user, items, dateTime = new Date()) => {
+const onConfirmPurchase = (setMessage, navigate) => (user, cart, dateTime = new Date()) => {
     if(user == null){
         setMessage("Primero debe iniciar sesión")
         return
     }
 
+    const {items} = cart
     const purchase = new Purchase(
         items, user.id, dateTime
     )
 
     PurchaseRepo.insert(purchase)
-        .then(inserted=>{
-            console.log(JSON.stringify(inserted, null, 2))
-        })
+        .then(({id})=>{
+            cart.clear()
+            navigate(paths.PURCHASE(id))
+        }) 
         .catch(err=>{
             console.error(err)
             setMessage("Se ha producido un error. Verifique si se realizó la transferencia, reintente y si el problema persiste, comuníquese con la boletería del local.")

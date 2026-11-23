@@ -19,29 +19,16 @@ const mapItem = i => {
         return i
     }
 
-    const {showing, movie} = i
-
-    return {
-        showing: {
-            id: showing.id,
-            dateTime: showing.dateTime,
-            auditorium: {
-                id: showing.auditorium.id,
-                name: showing.auditorium.name,
-            }
-        },
-
-        seats: i.seats,
-
-        movie: {
-            id: movie.id,
-            title: movie.title
-        }
-    }
+    const {showing, movie, seats} = i
+    showing.dateTime = new Date(showing.dateTime.seconds)
+    
+    return new ShowingItem(
+        movie, showing, seats
+    )
 }
 
-const mapPurchase = (p, dateTime = new Date()) => ({
+const mapPurchase = (p) => ({
     items: p.items.map(mapItem),
     userId: p.userId,
-    dateTime: dateTime
+    dateTime: p.dateTime
 })

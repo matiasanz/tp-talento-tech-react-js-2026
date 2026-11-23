@@ -21,17 +21,19 @@ export function onAuthStateChange(consumer){
 
 export function SessionUserProvider({ children }) {
     const [sessionUser, setSessionUser] = useState(null);
+    const [sessionLoaded, setSessionLoaded] = useState(false)
 
     useEffect(()=>{
         const unsubscribe = onAuthStateChange(async(user) => {
             setSessionUser(user? new User(user): null)
+            setSessionLoaded(true)
         })
 
         return unsubscribe
     }, [])
 
     return (
-        <sessionUserContext.Provider value={{sessionUser}}>
+        <sessionUserContext.Provider value={{sessionUser, sessionLoaded}}>
             {children}
         </sessionUserContext.Provider>
     );

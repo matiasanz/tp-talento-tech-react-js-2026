@@ -6,7 +6,7 @@ import { formatRowLabel } from "./SeatMap/utils"
 
 
 export default ({canEdit, item, cart, index}) => {
-    const {id} = item
+    const id = item.id ?? index
     return (
         <li key={id}>
             <h2>Item #{index+1}</h2>
