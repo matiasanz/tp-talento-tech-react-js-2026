@@ -1,9 +1,9 @@
 import { useState } from "react"
-import { MovieDraft } from "../../../js/domain/movie"
-import imagesRepo from "../../../js/repositories/images_repo"
-import moviesRepo from "../../../js/repositories/movies_write_repo"
+import { MovieDraft } from "../../../../js/domain/movie"
+import imagesRepo from "../../../../js/repositories/images_repo"
+import moviesRepo from "../../../../js/repositories/movies_write_repo"
 import { useNavigate } from "react-router-dom"
-import paths from "../../router/paths"
+import paths from "../../../router/paths"
 
 export default () => {
     const [movie, setMovie] = useState(new MovieDraft())

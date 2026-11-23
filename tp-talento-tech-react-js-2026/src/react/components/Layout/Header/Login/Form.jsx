@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { login, signup, ErrInvalidCredentials, ErrWeakPassword, ErrInvalidEmail, ErrEmailAlreadyInUse } from '../../../js/repositories/firebase/login';
-import { useErrorHandler } from '../../context/error_handler';
+import { login, signup, ErrInvalidCredentials, ErrWeakPassword, ErrInvalidEmail, ErrEmailAlreadyInUse } from '../../../../../js/repositories/firebase/login';
+import { useErrorHandler } from '../../../../context/error_handler';
 
 export default () =>
 <>

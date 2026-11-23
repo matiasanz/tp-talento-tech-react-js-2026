@@ -1,4 +1,4 @@
-import MovieListings from "../components/MovieListings";
+import MovieListings from "../components/features/MovieListings";
 
 export default () => <> 
     <h2>Cartelera</h2>

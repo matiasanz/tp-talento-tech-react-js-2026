@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import paths from "../router/paths"
 import {useCart} from "../context/cart"
 import { ShowingItem } from "../../js/domain/cart"
-import { formatRowLabel } from "../components/SeatMap/utils"
+import { formatRowLabel } from "../components/features/SeatMap/utils"
 import { formatDateTime } from "../../js/domain/formatters"
 
 export default () =>  { 

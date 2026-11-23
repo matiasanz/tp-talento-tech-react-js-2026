@@ -1,7 +1,7 @@
-import { logout } from '../../../js/repositories/firebase/login';
-import { useErrorHandler } from '../../context/error_handler';
-import { useSessionUser } from '../../context/session';
-import LoginForm from './form';
+import { logout } from '../../../../../js/repositories/firebase/login';
+import { useErrorHandler } from '../../../../context/error_handler';
+import { useSessionUser } from '../../../../context/session';
+import LoginForm from './Form';
 
 const Login = () => {
 	const {sessionUser} = useSessionUser() 

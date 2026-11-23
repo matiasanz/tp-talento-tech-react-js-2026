@@ -1,4 +1,4 @@
-import NewMovie from "../components/admin/NewMovie";
+import NewMovie from "../components/features/admin/NewMovie";
 
 export default () => ( <>
     <h2>Administración ⚜️</h2>
