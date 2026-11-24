@@ -5,6 +5,7 @@ import paths from "./paths"
 import About from "../views/About"
 import Error from "../views/Error"
 import Admin from "../views/Admin"
+import Purchase from "../views/Purchase"
 
 export default [
     {
@@ -23,6 +24,10 @@ export default [
     {
         path: paths.CART,
         element: <Cart/>
+    },
+    {
+        path: paths.PURCHASE(":purchaseId"),
+        element: <Purchase/>
     },
     {
         path: paths.ADMIN,

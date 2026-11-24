@@ -15,6 +15,7 @@ export default ({onFetchNext, canFetchNext, elements, alt, children}) => {
 
     const onClickShowMore = withPreventDefault(()=>{        
         onFetchNext(lastElement)
+        setEnabledButton(false)
     })
 
     return elements.length? (
@@ -23,7 +24,7 @@ export default ({onFetchNext, canFetchNext, elements, alt, children}) => {
                 { elements.map((e, index) => (<div key={e.id ?? index}>{children(e)}</div>)) }
             </div>
             {
-                canFetchNext && (
+                canFetchNext && enabledButton && (
                     <div>
                         <button onClick={onClickShowMore}>Mostrar más</button>
                     </div>
