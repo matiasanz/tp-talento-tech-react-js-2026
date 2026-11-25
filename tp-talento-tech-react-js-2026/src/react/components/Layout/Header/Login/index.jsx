@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { logout } from '../../../../../js/repositories/firebase/login';
 import { useErrorHandler } from '../../../../context/error_handler';
-import { onAuthStateChange, useSessionUser } from '../../../../context/session';
+import { onAuthStateChange } from '../../../../context/session';
 import LoginForm from './Form';
 
 const Login = () => {

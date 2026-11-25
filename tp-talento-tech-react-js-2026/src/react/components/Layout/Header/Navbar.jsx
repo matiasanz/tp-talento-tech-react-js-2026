@@ -7,11 +7,11 @@ const {HOME, ABOUT, CART, ADMIN} = paths
 
 export default () => {
     const [userRole, setUserRole] = useState("")
-    const {sessionUser} = useSessionUser()
+    const {user} = useSessionUser()
     
     useEffect(() => {
-        setUserRole( sessionUser ? sessionUser.role : "");
-    }, [sessionUser])
+        setUserRole( user.role);
+    }, [user.role])
 
 
     return (<>
