@@ -29,7 +29,7 @@ export default () => {
 
         purchaseRepo.findById(purchaseId)
             .then(async(p) => {
-                if(p.userId !== sessionUser.id){
+                if(p.userId !== sessionUser.id && sessionUser.role !== UserRole.ADMIN){
                     throw new NotFoundError()
                 }
 
