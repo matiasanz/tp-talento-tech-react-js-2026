@@ -8,6 +8,8 @@ import { NotFoundError } from "../../js/repositories/firebase/client/errors"
 import Item from "../components/features/Items"
 import AuditoriumsRepo from "../../js/repositories/auditoriums_read_repo"
 import { Showing } from "../../js/domain/showings"
+import { useSessionUser } from "../context/session"
+
 
 export default () => {
     const {handleError} = useErrorHandler()

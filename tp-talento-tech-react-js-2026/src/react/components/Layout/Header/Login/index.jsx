@@ -1,15 +1,19 @@
+import { useState } from 'react';
 import { logout } from '../../../../../js/repositories/firebase/login';
 import { useErrorHandler } from '../../../../context/error_handler';
-import { useSessionUser } from '../../../../context/session';
+import { onAuthStateChange, useSessionUser } from '../../../../context/session';
 import LoginForm from './Form';
 
 const Login = () => {
-	const {sessionUser} = useSessionUser() 
+	const [email, setEmail] = useState("")
+
+	onAuthStateChange( ({email}) => setEmail(email) )
+
 	const {handleError} = useErrorHandler()
 
-	return !sessionUser && <LoginForm/> || (
+	return !email.length && <LoginForm/> || (
 	<>
-		<h2>Bienvenido {sessionUser.email}</h2>
+		<h2>Bienvenido {email}</h2>
 		<button onClick={handleLogout(handleError)}>Cerrar sesión</button>
 	</>)
 };

@@ -33,7 +33,7 @@ export function SessionUserProvider({ children }) {
             let user = null
             if(userData){
                 user = new User(userData)
-
+                
                 try{
                     user.role = await fetchUserRole(user)
                 } catch(err){
