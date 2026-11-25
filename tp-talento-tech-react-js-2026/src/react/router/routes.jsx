@@ -28,11 +28,12 @@ export default [
     },
     {
         path: paths.PURCHASE(":purchaseId"),
+        requireRole: [UserRole.CLIENT, UserRole.ADMIN],
         element: <Purchase/>
     },
     {
-        requireRole: UserRole.ADMIN,
         path: paths.ADMIN,
+        requireRole: UserRole.ADMIN,
         element: <Admin/>
     },
     {
