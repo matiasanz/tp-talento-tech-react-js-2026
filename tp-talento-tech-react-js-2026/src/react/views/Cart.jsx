@@ -23,12 +23,12 @@ export default () =>  {
         return unsubscribe
     }, [] )
 
-    const {sessionUser} = useSessionUser() 
+    const { user } = useSessionUser() 
 
 
     const onClickConfirmPurchase = withPreventDefault(()=>{
         onConfirmPurchase(setMessage, navigate)
-            (sessionUser, cart)
+            (user, cart)
     })
 
     return cart.items.length > 0? (<>
@@ -37,12 +37,13 @@ export default () =>  {
         </ul>
 
         {
-            sessionUser? (
+            !user.isLoaded? "Verificando sesión...":
+            !user.exists? (<p>Aún no haz iniciado sesión, hazlo para poder confirmar la compra.</p>): (
                 <div>
                     <button onClick={onClickConfirmPurchase}>Confirmar Compra</button>
                     <p>{message}</p>
                 </div>
-            ): (<p>Aún no haz iniciado sesión, hazlo para poder confirmar la compra.</p>)
+            )
         }
 
         <button onClick={()=>onClickClearCart(cart)}>
@@ -55,7 +56,7 @@ export default () =>  {
 
 
 const onConfirmPurchase = (setMessage, navigate) => (user, cart, dateTime = new Date()) => {
-    if(user == null){
+    if(!user.exists){
         setMessage("Primero debe iniciar sesión")
         return
     }
