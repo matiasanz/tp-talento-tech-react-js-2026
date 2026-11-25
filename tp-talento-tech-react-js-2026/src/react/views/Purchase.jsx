@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
 
 import { useErrorHandler } from "../context/error_handler"
 
 import Loading from "../components/Loading"
 import purchaseRepo from "../../js/repositories/firebase/purchase_read_repo"
-import { useSessionUser } from "../context/session"
 import { NotFoundError } from "../../js/repositories/firebase/client/errors"
 import Item from "../components/features/Items"
 import AuditoriumsRepo from "../../js/repositories/auditoriums_read_repo"
@@ -49,6 +47,7 @@ export default () => {
             })
             .then(setPurchase)
             .catch(handleError)
+            
     }, [sessionUser, sessionLoaded])
 
     return (

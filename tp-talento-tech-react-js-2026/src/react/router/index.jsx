@@ -1,9 +1,30 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useLocation, matchPath, useNavigate } from "react-router-dom"
 import routes from "./routes"
-import { useSessionUser } from "../context/session"
+import { onAuthStateChange, useSessionUser } from "../context/session"
+import paths from "./paths"
+import { useEffect } from "react"
 
 export default () => {
     const {sessionUser} = useSessionUser()
+    const navigate = useNavigate()
+    const { pathname } = useLocation()
+
+    useEffect(()=>{
+        const unsubscribe = onAuthStateChange(user=>{
+            if(user === null){
+                const route = routes.find(({path}) => matchPath({path}, pathname))
+                if(route === null){
+                    return
+                }
+    
+                if(route.requireRole !== undefined){
+                    navigate(paths.HOME)
+                }
+            }
+        })
+
+        return unsubscribe
+    }, [])
 
     return (
         <Routes>
