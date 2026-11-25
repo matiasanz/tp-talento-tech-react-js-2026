@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom"
 import paths from "../../../router/paths"
 import { useState, useEffect } from "react"
-import { onAuthStateChange } from "../../../context/session"
 import { UserRole } from "../../../../js/domain/users"
 import { useSessionUser } from "../../../context/session"
 const {HOME, ABOUT, CART, ADMIN} = paths
