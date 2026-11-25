@@ -4,3 +4,8 @@ export class User{
         this.email = email
     }
 }
+
+export const UserRole = {
+    CLIENT: "CLIENT",
+    ADMIN: "ADMIN"
+}
