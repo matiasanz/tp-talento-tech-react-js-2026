@@ -1,5 +1,5 @@
 import { db } from './config'
-import { doc, getDoc, collection, getDocs, query } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, onSnapshot } from 'firebase/firestore';
 import { handleReadError } from './errors';
 import { Pagination } from './pagination';
 
@@ -56,5 +56,46 @@ export class ReadClient {
         } catch (error) {
             handleReadError(error);
         }
+    }
+
+    async findByIdOnSnapshot(id, mapper=identity, maxRetries = 10, timeoutMs = 3000){
+        let retry = 1
+        let timer = null
+
+        const docRef = doc(db, this.collectionName, id);
+        try {
+            const data = await new Promise((resolve, reject ) => {
+                timer = setTimeout(() => {
+                    unsubscribe?.();
+                    reject({ 
+                        code: 'timeout', 
+                        message: `Document with Id "${id}" wasn't found after ${timeoutMs}ms.` 
+                    });
+                }, timeoutMs);
+
+                let unsubscribe = null
+                
+                unsubscribe = onSnapshot(docRef, snap => {
+                    if (!snap.exists()) {
+                        if (retry++>=maxRetries){
+                            unsubscribe?.()
+                            clearTimeout(timer)
+                            reject({ code: 'not-found', message: `document with Id "${id}" doesn't exist after ${maxRetries} retries.` })
+                            return
+                        }
+    
+                        return
+                    }               
+                
+                    clearTimeout(timer)
+                    unsubscribe?.()
+                    resolve(snap)
+                })
+            }) 
+            
+            return fromDocument(data, mapper);
+        } catch (error) {
+            handleReadError(error);
+        } 
     }
 }
