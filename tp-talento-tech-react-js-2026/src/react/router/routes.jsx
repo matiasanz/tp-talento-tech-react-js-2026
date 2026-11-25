@@ -6,6 +6,7 @@ import About from "../views/About"
 import Error from "../views/Error"
 import Admin from "../views/Admin"
 import Purchase from "../views/Purchase"
+import { UserRole } from "../../js/domain/users"
 
 export default [
     {
@@ -30,6 +31,7 @@ export default [
         element: <Purchase/>
     },
     {
+        requireRole: UserRole.ADMIN,
         path: paths.ADMIN,
         element: <Admin/>
     },
