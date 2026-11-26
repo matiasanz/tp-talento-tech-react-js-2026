@@ -3,19 +3,24 @@ import { updateAttributes, withPreventDefault } from "../../utils";
 import { useEffect } from "react";
 import moviesRepo from "../../../../js/repositories/movies_read_repo";
 import { useErrorHandler } from "../../../context/error_handler";
+import auditoriumsRepo from "../../../../js/repositories/static_json/auditoriums_read_repo";
 
 export default function NewShowing() {
-    const auditoriums = [{ id: 1, name: "Sala Negra" }];
-    const [movies, setMovies] = useState([]);
+    const [movies, setMovies] = useState([])
+    const [auditoriums, setAuditoriums] = useState([])
 
-    const [showing, setShowing] = useState(new Draft());
-    const onChangeInputValue = updateAttributes(setShowing);
+    const [showing, setShowing] = useState(new Draft())
+    const onChangeInputValue = updateAttributes(setShowing)
 
     const { handleError } = useErrorHandler()
 
     useEffect(() => {
         moviesRepo.findAll()
             .then(setMovies)
+            .catch(handleError)
+
+        auditoriumsRepo.findAll()
+            .then(setAuditoriums)
             .catch(handleError)
     }, [])
 
