@@ -46,7 +46,7 @@ export default () => {
             .then(setPurchase)
             .catch(handleError)
             
-    }, [user.isLoaded, user.exists, user.role.exists])
+    }, [user.isLoaded, user.exists, user.role])
 
     return (
         <>
