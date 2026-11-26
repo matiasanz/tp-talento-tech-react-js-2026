@@ -12,7 +12,7 @@ import { SeatMap } from "../components/features/SeatMap"
 import Loading from "../components/Loading"
 
 import moviesRepo from "../../js/repositories/movies_read_repo"
-import showingsRepo from "../../js/repositories/showings_repo"
+import showingsRepo from "../../js/repositories/showings_read_repo"
 
 import { formatDateTime } from "../../js/domain/formatters"
 

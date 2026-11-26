@@ -9,18 +9,27 @@ export function formatDateTime(dateTime) {
     return `${day}/${month} ${hours}:${minutes} hs`;
 }
 
-export function formatDateTimeToLocalISO(dateTimeString) {
-    if (!dateTimeString) return "";
-    
-    const date = new Date(dateTimeString);
+export function formatDateTimeToLocalISO(dateInput) {
+    if (!dateInput) return "";
+
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "";
+
+    const pad = (num) => String(Math.floor(Math.abs(num))).padStart(2, "0");
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
     const offsetMinutes = -date.getTimezoneOffset();
     const sign = offsetMinutes >= 0 ? "+" : "-";
-    const nDigits = (number, digits) => String(Math.floor(Math.abs(number))).padStart(digits, "0");
+    const offsetHours = pad(offsetMinutes / 60);
+    const offsetMins = pad(offsetMinutes % 60);
 
-    const hours = nDigits(offsetMinutes / 60, 2);
-    const minutes = nDigits(offsetMinutes % 60, 2);
-
-    return `${dateTimeString}:00${sign}${hours}:${minutes}`;
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${sign}${offsetHours}:${offsetMins}`;
 }
 
 

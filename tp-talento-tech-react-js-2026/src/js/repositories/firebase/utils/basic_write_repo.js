@@ -1,7 +1,7 @@
 import { WriteClient } from "../client/write_client";
 
 export class BasicWriteRepo{
-    constructor(collectionName, {mapper = o=>o}){
+    constructor(collectionName, {mapper = o=>o}={}){
         this._client = new WriteClient(collectionName)
         this._mapper = mapper
     }

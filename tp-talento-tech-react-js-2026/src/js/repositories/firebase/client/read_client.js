@@ -50,8 +50,10 @@ export class ReadClient {
     }
 
     async findByQuery(firestoreQuery, mapper=identity) {
+        const colRef = collection(db, this.collectionName);
+
         try {
-            const snap = await getDocs(firestoreQuery);
+            const snap = await getDocs(firestoreQuery(colRef));
             return fromDocuments(snap, mapper)
         } catch (error) {
             handleReadError(error);

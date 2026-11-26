@@ -41,7 +41,7 @@ export default function NewShowing() {
 
         showingsRepo.insert(
             new Showing({
-                dateTime: formatDateTimeToLocalISO(showing.dateTime),
+                dateTime: showing.dateTime,
                 movieId: movie.id,
                 auditorium,
                 soldSeats: []

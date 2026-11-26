@@ -11,9 +11,6 @@ class ReadRepo extends StaticJsonRepo {
 
         const elementsIndexed = new Map(elements.map(v => [v.id, v]))
 
-        console.log(JSON.stringify(elementsIndexed, null, 2))
-
-
         const matches = new Map()
         for(const elementId of ids){
             matches.set(elementId, elementsIndexed.get(elementId))
