@@ -7,7 +7,7 @@ import LoginForm from './Form';
 const Login = () => {
 	const [email, setEmail] = useState("")
 
-	onAuthStateChange( ({email}) => setEmail(email) )
+	onAuthStateChange( user => setEmail(user?.email??"") )
 
 	const {handleError} = useErrorHandler()
 
