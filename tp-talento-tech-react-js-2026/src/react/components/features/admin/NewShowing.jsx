@@ -1,16 +1,28 @@
 import { useState } from "react";
 import { updateAttributes, withPreventDefault } from "../../utils";
+import { useEffect } from "react";
+import moviesRepo from "../../../../js/repositories/movies_read_repo";
+import { useErrorHandler } from "../../../context/error_handler";
 
 export default function NewShowing() {
     const auditoriums = [{ id: 1, name: "Sala Negra" }];
-    const movies = [{ id: 1, name: "Finding Nemo" }];
+    const [movies, setMovies] = useState([]);
 
     const [showing, setShowing] = useState(new Draft());
     const onChangeInputValue = updateAttributes(setShowing);
 
+    const { handleError } = useErrorHandler()
+
+    useEffect(() => {
+        moviesRepo.findAll()
+            .then(setMovies)
+            .catch(handleError)
+    }, [])
+
     const onSubmit = withPreventDefault(() => {
         alert(JSON.stringify(showing, null, 2))
     })
+
 
     return (
         <form onSubmit={onSubmit}>
@@ -21,10 +33,10 @@ export default function NewShowing() {
                 value={showing.movieId}
                 onChange={onChangeInputValue}
             >
-                <option value="">Selecciona una película...</option>
+            <option value="">Selecciona una película...</option>
                 {movies.map((movie) => (
                     <option key={movie.id} value={movie.id}>
-                        {movie.name}
+                        {movie.title}
                     </option>
                 ))}
             </select>
