@@ -29,16 +29,13 @@ export default () => {
                     throw new NotFoundError()
                 }
 
-                const auditoriums = await AuditoriumsRepo.findAll()
-                const auditoriumsById = {}
-                auditoriums.forEach(a => {
-                    auditoriumsById[a.id] = a
-                })
+                const auditoriumsById = await AuditoriumsRepo.findManyById(p.items.map(getAuditoriumId))
 
-                p.items.forEach(i => {
-                    i.showing.auditorium = auditoriumsById[i.showing.auditorium.id]
-                    i.showing.movieId = i.movie.id
-                    i.showing = new Showing(i.showing)
+                p.items.forEach(item => {
+                    const showing = item.showing 
+                    showing.auditorium = auditoriumsById.get(getAuditoriumId(item))
+                    showing.movieId = item.movie.id
+                    item.showing = new Showing(showing)
                 })
 
                 return p
@@ -63,3 +60,5 @@ export default () => {
         </>
     )
 }
+
+const getAuditoriumId = item => item.showing.auditorium.id
