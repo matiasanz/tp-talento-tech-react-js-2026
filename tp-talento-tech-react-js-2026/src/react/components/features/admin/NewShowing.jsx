@@ -60,7 +60,7 @@ export default function NewShowing() {
                 value={showing.movieId}
                 onChange={onChangeInputValue}
             >
-            <option value="">Selecciona una película...</option>
+            <option hidden value="">Selecciona una película...</option>
                 {movies.map((movie) => (
                     <option key={movie.id} value={movie.id}>
                         {movie.title}
@@ -74,7 +74,7 @@ export default function NewShowing() {
                 value={showing.auditoriumId}
                 onChange={onChangeInputValue}
             >
-                <option value="">Selecciona una sala...</option>
+                <option hidden value="">Selecciona una sala...</option>
                 {auditoriums.map((auditorium) => (
                     <option key={auditorium.id} value={auditorium.id}>
                         {auditorium.name}
