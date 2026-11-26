@@ -7,7 +7,9 @@ class ShowingRepo extends StaticJsonRepo{
     }
 
     async findByMovieId(productId){
-        return this.findMany(({movieId})=>movieId === productId, s => new Showing(s))
+        return this.findMany(({movieId})=>movieId === productId, s => {
+            return new Showing(s)
+        })
     }
 }
 

@@ -4,6 +4,9 @@ import { useEffect } from "react";
 import moviesRepo from "../../../../js/repositories/movies_read_repo";
 import { useErrorHandler } from "../../../context/error_handler";
 import auditoriumsRepo from "../../../../js/repositories/static_json/auditoriums_read_repo";
+import { formatDateTimeToLocalISO } from "../../../../js/domain/formatters";
+import showingsRepo from "../../../../js/repositories/showings_write_repo";
+import { Showing } from "../../../../js/domain/showings";
 
 export default function NewShowing() {
     const [movies, setMovies] = useState([])
@@ -25,9 +28,28 @@ export default function NewShowing() {
     }, [])
 
     const onSubmit = withPreventDefault(() => {
-        alert(JSON.stringify(showing, null, 2))
-    })
+        const movie = movies.find(a => a.id === showing.movieId)
+        if(!movie){
+            handleError(new Error("movie not found"))
+        }
 
+        
+        const auditorium = auditoriums.find(a => a.id == showing.auditoriumId)
+        if(!auditorium){
+            handleError(new Error("auditorium not found"))
+        }
+
+        showingsRepo.insert(
+            new Showing({
+                dateTime: formatDateTimeToLocalISO(showing.dateTime),
+                movieId: movie.id,
+                auditorium,
+                soldSeats: []
+            }, {skipId: true})
+        ).then(()=>{
+            setShowing(new Draft())
+        })
+    })
 
     return (
         <form onSubmit={onSubmit}>
