@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import moviesRepo from "../../../../js/repositories/movies_read_repo";
 import { useErrorHandler } from "../../../context/error_handler";
 import auditoriumsRepo from "../../../../js/repositories/static_json/auditoriums_read_repo";
-import { formatDateTimeToLocalISO } from "../../../../js/domain/formatters";
-import showingsRepo from "../../../../js/repositories/showings_write_repo";
+import showingsRepo from "../../../../js/repositories/showings_create_repo";
 import { Showing } from "../../../../js/domain/showings";
 
 export default function NewShowing() {
