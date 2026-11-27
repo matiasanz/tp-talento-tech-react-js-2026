@@ -13,7 +13,6 @@ export default () => {
         setUserRole( user.role);
     }, [user.role])
 
-
     return (<>
         <nav style={{ padding: '10px', background: '#eee', marginBottom: '20px' }}>
             <Link to={HOME} style={{ marginRight: '15px' }}>Inicio</Link>
