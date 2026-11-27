@@ -54,7 +54,7 @@ export function SessionUserProvider({ children }) {
 
         return unsubscribe
     }, [])
-
+https://github.com/matiasanz/tp-talento-tech-react-js-2026/pull/22/conflict?name=tp-talento-tech-react-js-2026%252Fsrc%252Freact%252Fcontext%252Fsession.jsx&ancestor_oid=40ea1eeed90e52108508135af007eddb8fe75896&base_oid=3c7077d007bd0b4eca6b266eace21a04a516ae49&head_oid=c5d0d6b9a9d5bdd5cbbc5d56da99b188add25d71
     return (
         <sessionUserContext.Provider value={{user}}>
             {children}
