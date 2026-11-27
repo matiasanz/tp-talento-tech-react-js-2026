@@ -8,6 +8,8 @@ import { useEffect } from "react"
 import Item from "../components/features/Items"
 import paths from "../router/paths"
 import { useNavigate } from "react-router-dom"
+import showingsRepo from "../../js/repositories/firebase/showings_update_repo"
+import { ShowingItem } from "../../js/domain/cart"
 
 export default () =>  { 
     const cart = useCart()
@@ -66,11 +68,19 @@ const onConfirmPurchase = (setMessage, navigate) => (user, cart, dateTime = new 
         items, user.id, dateTime
     )
 
+    items.map(item => {
+        if(!item instanceof ShowingItem){
+            return
+        }
+
+        showingsRepo.updateAvailability(item.showing, item.seats)
+    })
+
     PurchaseRepo.insert(purchase)
         .then(({id})=>{
             cart.clear()
             navigate(paths.PURCHASE(id))
-        }) 
+        })
         .catch(err=>{
             console.error(err)
             setMessage("Se ha producido un error. Verifique si se realizó la transferencia, reintente y si el problema persiste, comuníquese con la boletería del local.")

@@ -12,9 +12,9 @@ export class WriteClient {
             .catch(handleCreateError)
     }
 
-    async update(data) {
+    async update(object, updates = null) {
         try {
-            await updateDoc(doc(db, this.collectionName, data.id), data);
+            await updateDoc(doc(db, this.collectionName, object.id), updates ?? object);
         } catch (e) {
             handleUpdateError(e);
         }

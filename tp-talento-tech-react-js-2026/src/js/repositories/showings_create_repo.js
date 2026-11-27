@@ -1,3 +1,3 @@
-import WriteRepo from "./firebase/showings_write_repo";
+import WriteRepo from "./firebase/showings_create_repo";
 
 export default WriteRepo

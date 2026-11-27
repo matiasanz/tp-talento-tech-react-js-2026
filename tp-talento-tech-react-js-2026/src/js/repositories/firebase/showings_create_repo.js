@@ -10,8 +10,6 @@ function mapper(showing) {
         throw new Error('Expected an instance of Showing.');
     }
 
-    console.log(formatDateTimeToLocalISO(showing.dateTime))
-
     return {
         dateTime: formatDateTimeToLocalISO(showing.dateTime),
         movieId: showing.movieId,
