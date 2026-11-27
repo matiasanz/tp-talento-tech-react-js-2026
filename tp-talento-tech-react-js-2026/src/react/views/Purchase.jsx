@@ -8,26 +8,24 @@ import { NotFoundError } from "../../js/repositories/firebase/client/errors"
 import Item from "../components/features/Items"
 import AuditoriumsRepo from "../../js/repositories/auditoriums_read_repo"
 import { Showing } from "../../js/domain/showings"
+import { useSessionUser } from "../context/session"
+import { useParams } from "react-router-dom"
+import { UserRole } from "../../js/domain/users"
 
 export default () => {
     const {handleError} = useErrorHandler()
-    const {sessionUser, sessionLoaded} = useSessionUser()
+    const { user } = useSessionUser()
     const {purchaseId} = useParams()
     const [purchase, setPurchase] = useState(null)
 
     useEffect(()=>{
-        if(!sessionLoaded){
-            return
-        }
-
-        if(!sessionUser){
-            handleError(new NotFoundError())
+        if(!user.isLoaded || !user.role){
             return
         }
 
         purchaseRepo.findById(purchaseId)
             .then(async(p) => {
-                if(p.userId !== sessionUser.id && sessionUser.role !== UserRole.ADMIN){
+                if(p.userId !== user.id && user.role !== UserRole.ADMIN){
                     throw new NotFoundError()
                 }
 
@@ -48,7 +46,7 @@ export default () => {
             .then(setPurchase)
             .catch(handleError)
             
-    }, [sessionUser, sessionLoaded])
+    }, [user.isLoaded, user.exists, user.role])
 
     return (
         <>

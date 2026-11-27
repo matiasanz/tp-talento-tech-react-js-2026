@@ -5,7 +5,7 @@ import paths from "./paths"
 import { useEffect } from "react"
 
 export default () => {
-    const {sessionUser} = useSessionUser()
+    const { user } = useSessionUser()
     const navigate = useNavigate()
     const { pathname } = useLocation()
 
@@ -29,7 +29,7 @@ export default () => {
     return (
         <Routes>
             {
-                routes.map(({path, element, alias, requireRole}) => admitRoute(requireRole, sessionUser)?
+                routes.map(({path, element, alias, requireRole}) => admitRoute(requireRole, user)?
                     <>
                         { ARoute(path, element) }
                         { alias && alias.map(a => ARoute(a, element)) }
