@@ -7,6 +7,8 @@ import Error from "../views/Error"
 import Admin from "../views/Admin"
 import Purchase from "../views/Purchase"
 import { UserRole } from "../../js/domain/users"
+import Loading from "../components/Loading"
+import { useSessionUser } from "../context/session"
 
 export default [
     {
@@ -38,6 +40,15 @@ export default [
     },
     {
         path: "*",
-        element: <Error status={404}/>
+        element: <Default/>
     },
 ]
+
+function Default() {
+    const { user } = useSessionUser()
+    return (
+        <Loading isLoaded={user.isLoaded}>
+            <Error status={404}/>
+        </Loading>
+    )
+}

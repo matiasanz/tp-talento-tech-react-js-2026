@@ -1,10 +1,5 @@
-import { WriteClient } from "./client/write_client";
+import { BasicWriteRepo } from "./utils/basic_write_repo";
 import { normalizeValueForSearch } from "../utils/search";
-
-function parseDuration(durationHHMM){
-    var timeParts = durationHHMM.split(":");
-    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
-}
 
 const mapMovie = m => {
     if (m.poster == null) {
@@ -18,28 +13,15 @@ const mapMovie = m => {
     }
 }
 
-class WriteRepository{
-    constructor(){
-        this.client = new WriteClient('movies')
-    }
-
-    
-    async insert(movie){
-        const id = crypto.randomUUID()
-        const mapped = mapMovie(movie)
-        return this.client.insert(id, mapped)
-            .then(()=>({
-                ...mapped,
-                id
-            })
-        )
-    }
-}
-
-export default new WriteRepository()
-
 // utils
 
 function buildSearchValue(fields){
     return fields.map(normalizeValueForSearch).join("|")
 }
+
+function parseDuration(durationHHMM){
+    var timeParts = durationHHMM.split(":");
+    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+}
+
+export default new BasicWriteRepo("movies", {mapper: mapMovie})

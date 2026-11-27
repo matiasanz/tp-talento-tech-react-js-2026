@@ -29,8 +29,8 @@ export class Auditorium {
 }
 
 export class Showing {
-    constructor({ id, dateTime, movieId, auditorium, soldSeats = [] }) {
-        if (!id) throw new Error('Showing must have an id.');
+    constructor({ id, dateTime, movieId, auditorium, soldSeats = [] }, {skipId = false}={}) {
+        if (!skipId && !id) throw new Error('Showing must have an id.');
         if (!movieId) throw new Error('Showing must have a movieId.');
         if (!auditorium) throw new Error('Showing must have an assigned auditorium.');
 

@@ -4,6 +4,7 @@ import imagesRepo from "../../../../js/repositories/images_repo"
 import moviesRepo from "../../../../js/repositories/movies_write_repo"
 import { useNavigate } from "react-router-dom"
 import paths from "../../../router/paths"
+import { updateAttributes } from "../../utils"
 
 export default () => {
     const [movie, setMovie] = useState(new MovieDraft())
@@ -14,7 +15,7 @@ export default () => {
     
 
     const onSubmitForm = event => sendValue(event, movie, setResultMessage, navigate)
-    const onChangeInputValue = updateValue(setMovie)
+    const onChangeInputValue = updateAttributes(setMovie)
 
     return (
         <>
@@ -58,16 +59,6 @@ export default () => {
 }
 
 // utils
-function updateValue(setState){
-    return (event) => {
-        const {target: {name, value}} = event;
-        setState((current) => ({
-            ...current,
-            [name]: value
-        }));
-    }
-}
-
 function updateFile(setState){
     return async(event) => {
         const {target: {name, files}} = event;
