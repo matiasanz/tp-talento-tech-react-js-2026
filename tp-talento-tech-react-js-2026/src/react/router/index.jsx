@@ -11,7 +11,7 @@ export default () => {
 
     useEffect(()=>{
         const unsubscribe = onAuthStateChange(user=>{
-            if(user === null){
+            if(!user.exists){
                 const route = routes.find(({path}) => matchPath({path}, pathname))
                 if(route === null){
                     return
