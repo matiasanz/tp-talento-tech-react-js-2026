@@ -24,11 +24,12 @@ function UserForm({title, onSubmit, expectedErrors}){
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("")
     const {handleError} = useErrorHandler()
+    const [submitDisabled, setSubmitDisabled] = useState(false)
 
     return (
     <>
         <h2>{title}</h2>
-        <form onSubmit={handleUserForm({email, password}, onSubmit, setMessage, expectedErrors, handleError)}>
+        <form onSubmit={handleUserForm({email, password}, onSubmit, setMessage, setSubmitDisabled, expectedErrors, handleError)}>
             <input type="email" required autoComplete='on'
                 placeholder="Correo electrónico"
                 value={email}
@@ -40,7 +41,7 @@ function UserForm({title, onSubmit, expectedErrors}){
                 value={password}
                 onChange={onChange(setPassword)}
             />
-            <input type="submit" value="Ingresar"/>
+            <input disabled={submitDisabled} type="submit" value="Ingresar"/>
         </form>
 
         <h5>{message}</h5>
@@ -48,14 +49,15 @@ function UserForm({title, onSubmit, expectedErrors}){
     );
 }
 
-const handleUserForm = ({email, password}, onSubmit, setMessage, expectedErrors, handleError) => (event) => {
+const handleUserForm = ({email, password}, onSubmit, setMessage, setSubmitDisabled, expectedErrors, handleError) => (event) => {
 	event.preventDefault();
-
+    setSubmitDisabled(true)
 	onSubmit(email, password)
 		.catch((error) => {
             for(const [errType, message] of expectedErrors){
                 if(error instanceof errType){
                     setMessage(message)
+                    setSubmitDisabled(false)
                     return
                 }
             }

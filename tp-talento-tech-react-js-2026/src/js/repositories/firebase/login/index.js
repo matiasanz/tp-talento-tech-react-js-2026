@@ -2,6 +2,8 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } f
 import { AuthResponseDto } from "./dto";
 import { FirebaseError } from "firebase/app";
 import { auth } from "../client/config";
+import UsersRepo from "../../users_write_repo";
+import { UserRole } from "../../../domain/users";
 
 export async function login(email, password) {
     const userData = await signInWithEmailAndPassword(auth, email, password)
@@ -25,6 +27,8 @@ export async function signup(email, password) {
     if(!isValid){
         throw new ErrUnprocessableResponse(errors)
     }
+
+    await UsersRepo.insert({id: userData.user.uid, role: UserRole.CLIENT})
 
     return userData
 }

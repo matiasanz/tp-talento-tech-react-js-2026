@@ -3,6 +3,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import { User } from "../../js/domain/users";
 import { useEffect } from "react";
 import { auth } from "../../js/repositories/firebase/client/config";
+import UsersRepo from "../../js/repositories/firebase/users_read_repo";
+import { useErrorHandler } from "./error_handler";
+import { logout } from "../../js/repositories/firebase/login";
 
 const sessionUserContext = createContext();
 
@@ -22,10 +25,27 @@ export function onAuthStateChange(consumer){
 export function SessionUserProvider({ children }) {
     const [sessionUser, setSessionUser] = useState(null);
     const [sessionLoaded, setSessionLoaded] = useState(false)
+    const {handleError} = useErrorHandler()
 
     useEffect(()=>{
-        const unsubscribe = onAuthStateChange(async(user) => {
-            setSessionUser(user? new User(user): null)
+        const unsubscribe = onAuthStateChange(async(userData) => {
+
+            let user = null
+            if(userData){
+                user = new User(userData)
+
+                try{
+                    user.role = await fetchUserRole(user)
+                } catch(err){
+                    logout().finally(()=>
+                        handleError(err)
+                    )
+                    
+                    return
+                }
+            }
+
+            setSessionUser(user)
             setSessionLoaded(true)
         })
 
@@ -38,3 +58,6 @@ export function SessionUserProvider({ children }) {
         </sessionUserContext.Provider>
     );
 }
+
+const fetchUserRole = (user) => UsersRepo.findById(user.id, {onSnaphot: true})
+    .then( ({role}) => role )
